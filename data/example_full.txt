@@ -20,3 +20,7 @@ if (m==n) {
     if (m >= n)
         print res;
 }
+
+if (m!=n){
+    m[3]=18;
+}
