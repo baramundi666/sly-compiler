@@ -68,14 +68,14 @@ class Scanner(Lexer):
     ID['ones'] = 'ONES'
     ID['print'] = 'PRINT'
 
-    FLOATNUM = r'[-+]?(?:(?:\d*\.\d+)|(?:\d+\.\d*)|(?:\d+))(?:[eE][-+]?\d+)?'
+    FLOATNUM = r'[-+]?((\d*\.\d+|\d+\.\d*|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)'
     INTNUM = r'\d+'
     STRING = r'\".*?\"|\'.*?\''
 
     SKIP = r'[ \t\n]+'
     COMMENT = r'\#.*'
 
-    @_(r'[-+]?(?:(?:\d*\.\d+)|(?:\d+\.\d*)|(?:\d+))(?:[eE][-+]?\d+)?')
+    @_(r'[-+]?((\d*\.\d+|\d+\.\d*|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)')
     def FLOATNUM(self, t):
         t.value = float(t.value)
         return t
