@@ -26,7 +26,8 @@ class Scanner(Lexer):
     }
 
     tokens = [
-        "DOTPLUS", "DOTMINUS", "DOTTIMES", "DOTDIVIDE", "ADDASSIGN", "SUBASSIGN", "MULASSIGN", "DIVASSIGN",
+        "DOTPLUS", "DOTMINUS", "DOTTIMES", "DOTDIVIDE",
+        "ADDASSIGN", "SUBASSIGN", "MULASSIGN", "DIVASSIGN",
         "EQ", "NEQ", "LE", "GE", "LT", "GT",
         "ID", "INTNUM", "FLOATNUM", "STRING", "SKIP", "COMMENT"
     ] + list(reserved.values())
