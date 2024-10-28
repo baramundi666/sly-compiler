@@ -69,20 +69,30 @@ class Scanner(Lexer):
     ID['ones'] = 'ONES'
     ID['print'] = 'PRINT'
 
-    FLOATNUM = r'((\d*\.\d+|\d+\.|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)'
+    FLOATNUM = r'[-+]?((\d*\.\d+|\d+\.\d*|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)'
     INTNUM = r'\d+'
     STRING = r'\".*?\"|\'.*?\''
 
-    SKIP = r'[ \t]+'
+    SKIP = r'[ \t\n]+'
     COMMENT = r'\#.*'
+
+    @_(r'[-+]?((\d*\.\d+|\d+\.\d*|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)')
+    def FLOATNUM(self, t):
+        t.value = float(t.value)
+        return t
+
+    @_(r'\d+')
+    def INTNUM(self, t):
+        t.value = int(t.value)
+        return t
 
     @_(r'\#.*')
     def COMMENT(self, t):
         pass
 
-    @_(r'[\n]+')
-    def NEWLINE(self, t):
-        self.lineno += 1
+    @_(r'[ \t\n]+')
+    def SKIP(self, t):
+        self.lineno += t.value.count('\n')
         pass
 
 
