@@ -2,8 +2,12 @@ install:
 	@echo "Installing dependencies"
 	pip3 install -r requirements.txt
 
-lab1:
-	@echo "Running lab1"
+scanner1:
+	@echo "Running scanner test: example.txt"
+	python3 -m src example.txt
+
+scanner2:
+	@echo "Running scanner test: example_full.txt"
 	python3 -m src example_full.txt
 
 lint:

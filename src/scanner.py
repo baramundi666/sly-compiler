@@ -8,24 +8,11 @@ class MyToken(sly.lex.Token):
     def __repr__(self):
         return f"({self.lineno}): {self.type}({self.value})"
 
+
 sly.lex.Token = MyToken
 
 
 class Scanner(Lexer):
-    reserved = {
-        "if": "IF",
-        "else": "ELSE",
-        "for": "FOR",
-        "while": "WHILE",
-        "break": "BREAK",
-        "continue": "CONTINUE",
-        "return": "RETURN",
-        "eye": "EYE",
-        "zeros": "ZEROS",
-        "ones": "ONES",
-        "print": "PRINT",
-    }
-
     tokens = [
         "DOTPLUS",
         "DOTMINUS",
@@ -42,12 +29,23 @@ class Scanner(Lexer):
         "LT",
         "GT",
         "ID",
-        "INTNUM",
+        "IF",
+        "ELSE",
+        "FOR",
+        "WHILE",
+        "BREAK",
+        "CONTINUE",
+        "RETURN",
+        "EYE",
+        "ZEROS",
+        "ONES",
+        "PRINT",
         "FLOATNUM",
+        "INTNUM",
         "STRING",
         "SKIP",
         "COMMENT",
-    ] + list(reserved.values())
+    ]
 
     literals = {
         "+",
@@ -99,32 +97,16 @@ class Scanner(Lexer):
     ID["ones"] = "ONES"
     ID["print"] = "PRINT"
 
-    FLOATNUM = r"[-+]?((\d*\.\d+|\d+\.\d*|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)"
+    FLOATNUM = r"([0-9]+\.([0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?"
     INTNUM = r"\d+"
     STRING = r"\".*?\"|\'.*?\'"
 
-    SKIP = r"[ \t\n]+"
-    COMMENT = r"\#.*"
+    ignore = ' \t'
+    ignore_comment = r'\#.*'
 
-    @_(r"[-+]?((\d*\.\d+|\d+\.\d*|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)")
-    def FLOATNUM(self, t):
-        t.value = float(t.value)
-        return t
-
-    @_(r"\d+")
-    def INTNUM(self, t):
-        t.value = int(t.value)
-        return t
-
-    @_(r"\#.*")
-    def COMMENT(self, t):
-        pass
-
-    @_(r"[ \t\n]+")
-    def SKIP(self, t):
-        self.lineno += t.value.count("\n")
-        pass
+    @_(r"\n")
+    def NEWLINE(self, _):
+        self.lineno += 1
 
     def error(self, t):
-        print("Line %d: Bad character %r" % (self.lineno, t.value[0]))
-        self.index += 1
+        print(f"Line {self.lineno}: Bad character \"{t.value[0]}\"")
