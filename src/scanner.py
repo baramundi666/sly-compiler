@@ -43,8 +43,6 @@ class Scanner(Lexer):
         "FLOATNUM",
         "INTNUM",
         "STRING",
-        "SKIP",
-        "COMMENT",
     ]
 
     literals = {

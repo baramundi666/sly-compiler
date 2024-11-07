@@ -70,7 +70,7 @@ class Parser(SLYParser):
     def expression(self, p):
         pass
 
-    @_("list", "'[' list ']'")
+    @_("'[' list ']'")
     def expression(self, p):
         pass
 
@@ -82,7 +82,7 @@ class Parser(SLYParser):
     def spread_elements(self, p):
         pass
 
-    @_("list_element", "spread_elements")
+    @_("list ',' '[' spread_elements ']'", "'[' spread_elements ']'")
     def list(self, p):
         pass
 
