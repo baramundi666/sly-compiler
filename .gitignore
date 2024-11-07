@@ -1,3 +1,4 @@
+*.out
 .ruff_cache/
 .idea/
 # MacOS

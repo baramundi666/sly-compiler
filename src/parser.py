@@ -1,11 +1,14 @@
+import os
+
 from sly import Parser as SLYParser
-from scanner import Scanner
+from src.scanner import Scanner
+from src.utils import get_absolute_path
 
 
 class Parser(SLYParser):
     tokens = Scanner.tokens
 
-    debugfile = "parser.out"
+    debugfile = get_absolute_path(f"data/parser/debug/parser.out")
 
     precedence = (
         ("nonassoc", "ADDASSIGN", "SUBASSIGN", "MULASSIGN", "DIVASSIGN"),
@@ -55,7 +58,7 @@ class Parser(SLYParser):
 
     @_("'-' expression")
     def expression(self, p):
-        return -p.expr
+        pass
 
     @_("ZEROS '(' expression ')' ")
     def expression(self, p):
