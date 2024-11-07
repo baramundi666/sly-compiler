@@ -1,16 +1,17 @@
 import sys
 import os
+from ast import Param
 
-from src.parser import Mparser
+from src.parser import Parser
 from src.scanner import Scanner
 
 
 def main():
-    file = load_file("scanner")
+    file = load_file("parser")
     text = file.read()
 
     lexer = Scanner()
-    parser = Mparser()
+    parser = Parser()
 
     parser.parse(lexer.tokenize(text))
 

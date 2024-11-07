@@ -12,6 +12,10 @@ sly.lex.Token = MyToken
 
 
 class Scanner(Lexer):
+
+    ignore = ' \t'
+    ignore_comment = r'#.*'
+
     reserved = {
         "if": "IF",
         "else": "ELSE",
@@ -45,8 +49,6 @@ class Scanner(Lexer):
         "INTNUM",
         "FLOATNUM",
         "STRING",
-        "SKIP",
-        "COMMENT",
     ] + list(reserved.values())
 
     literals = {
@@ -61,7 +63,7 @@ class Scanner(Lexer):
         "{",
         "}",
         ":",
-        "'",
+        "\'",
         ",",
         ";",
         "=",
@@ -103,8 +105,8 @@ class Scanner(Lexer):
     INTNUM = r"\d+"
     STRING = r"\".*?\"|\'.*?\'"
 
-    SKIP = r"[ \t\n]+"
-    COMMENT = r"\#.*"
+    # SKIP = r"[ \t\n]+"
+    # COMMENT = r"\#.*"
 
     @_(r"[-+]?((\d*\.\d+|\d+\.\d*|\d+\.[eE][-+]?\d+)|\d+[eE][-+]?\d+)")
     def FLOATNUM(self, t):
@@ -116,14 +118,13 @@ class Scanner(Lexer):
         t.value = int(t.value)
         return t
 
-    @_(r"\#.*")
-    def COMMENT(self, t):
-        pass
+    # @_(r"\#.*")
+    # def COMMENT(self, t):
+    #     pass
 
-    @_(r"[ \t\n]+")
-    def SKIP(self, t):
-        self.lineno += t.value.count("\n")
-        pass
+    @_(r'\n+')
+    def ignore_newline(self, t):
+        self.lineno += len(t.value)
 
     def error(self, t):
         print("Line %d: Bad character %r" % (self.lineno, t.value[0]))
