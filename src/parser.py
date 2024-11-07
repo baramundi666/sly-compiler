@@ -54,7 +54,7 @@ class Parser(SLYParser):
     def expression(self, p):
         pass
 
-    @_("'-' expression %prec UMINUS")
+    @_("'-' expression")
     def expression(self, p):
         return -p.expr
 
