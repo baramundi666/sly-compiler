@@ -1,17 +1,19 @@
 import sys
 import os
+from ast import Param
 
+from src.parser import Parser
 from src.scanner import Scanner
 
 
 def main():
-    file = load_file("scanner")
+    file = load_file("parser")
     text = file.read()
 
     lexer = Scanner()
+    parser = Parser()
 
-    for tok in lexer.tokenize(text):
-        print(tok)
+    parser.parse(lexer.tokenize(text))
 
 
 def load_file(dir: str):
