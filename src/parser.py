@@ -13,10 +13,10 @@ class Parser(SLYParser):
     precedence = (
         ("nonassoc", "ADDASSIGN", "SUBASSIGN", "MULASSIGN", "DIVASSIGN"),
         ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ"),
-        ("left", "+", "DOTPLUS", "DOTMINUS"),
+        ("left", "+", "-", "DOTPLUS", "DOTMINUS"),
         ("left", "*", "/", "DOTTIMES", "DOTDIVIDE"),
         ("right", "\'"),
-        ("right", "-"),
+        ("right", "UMINUS"),
     )
 
     @_("")
