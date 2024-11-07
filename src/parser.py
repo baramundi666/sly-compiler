@@ -13,7 +13,6 @@ class Parser(SLYParser):
         ("left", "+", "-", "DOTPLUS", "DOTMINUS"),
         ("left", "*", "/", "DOTTIMES", "DOTDIVIDE"),
         ("right", "\'"),
-        ("right", "UMINUS"),
     )
 
     @_("")
