@@ -30,7 +30,7 @@ class Parser(SLYParser):
     def start(self, p):
         pass
 
-    @_('INTNUM', 'FLOATNUM', 'STRING')
+    @_("ID", "INTNUM", "FLOATNUM", "STRING")
     def expression(self, p):
         pass
 
@@ -96,11 +96,18 @@ class Parser(SLYParser):
     def indexes(self, p):
         pass
 
+    @_("IF expression block", "IF expression block ELSE block",
+       "WHILE expression block", "FOR ID '=' range block")
+    def statement(self, p):
+        pass
+
     @_("assignable '=' expression ';'", "assignable ADDASSIGN expression ';'",
-       "assignable SUBASSIGN expression ';'", "assignable MULASSIGN expression ';'",
-       "assignable DIVASSIGN expression ';'", "RETURN expression ';'", "CONTINUE ';'",
-       "BREAK ';'", "expression ';'", "PRINT prints ';'", "IF expression block",
-       "IF expression block ELSE block", "WHILE expression block", "FOR ID '=' range block"
+       "assignable SUBASSIGN expression ';'", "assignable MULASSIGN expression ';'", "assignable DIVASSIGN expression ';'",
+       "RETURN expression ';'",
+       "CONTINUE ';'",
+       "BREAK ';'",
+       "expression ';'",
+       "PRINT prints ';'",
        )
     def statement(self, p):
         pass
@@ -109,11 +116,11 @@ class Parser(SLYParser):
     def block(self, p):
         pass
 
-    @_("expression ',' prints", "expression ';'")
+    @_("expression ',' prints", "expression")
     def prints(self, p):
         pass
 
-    @_('INTNUM ":" INTNUM', 'ID ":" ID', 'ID ":" INTNUM', 'INTNUM ":" ID')
+    @_("INTNUM ':' INTNUM", "ID ':' ID", "ID ':' INTNUM", "INTNUM ':' ID")
     def range(self, p):
         pass
 
