@@ -16,6 +16,7 @@ class Parser(SLYParser):
         ("left", "+", "-", "DOTPLUS", "DOTMINUS"),
         ("left", "*", "/", "DOTTIMES", "DOTDIVIDE"),
         ("right", "\'"),
+        ("right", "UMINUS")
     )
 
     @_("")
@@ -56,7 +57,7 @@ class Parser(SLYParser):
     def expression(self, p):
         pass
 
-    @_("'-' expression")
+    @_("'-' expression %prec UMINUS")
     def expression(self, p):
         pass
 
