@@ -21,16 +21,28 @@ def main():
             test_parser(text)
         case "scanner":
             test_scanner(text)
+        case "ast":
+            test_ast(text)
+
+
+def test_ast(text):
+    lexer = Scanner()
+    parser = Parser()
+    ast = parser.parse(lexer.tokenize(text))
+    ast.printTree()
+
 
 def test_parser(text):
     lexer = Scanner()
     parser = Parser()
     parser.parse(lexer.tokenize(text))
 
+
 def test_scanner(text):
     lexer = Scanner()
     for tok in lexer.tokenize(text):
         print(tok)
+
 
 if __name__ == "__main__":
     main()

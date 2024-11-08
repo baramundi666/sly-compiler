@@ -95,18 +95,17 @@ class Scanner(Lexer):
     ID["ones"] = "ONES"
     ID["print"] = "PRINT"
 
-
     FLOATNUM = r"(\d*\.?\d+[eE][-+]?\d+)|((\d+\.\d*)|(\.\d+))"
     INTNUM = r"\d+"
     STRING = r"\".*?\"|\'.*?\'"
 
-    ignore = ' \t' # ignore spaces and tabs
-    ignore_comment = r'\#.*'
+    ignore = " \t"  # ignore spaces and tabs
+    ignore_comment = r"\#.*"
 
     @_(r"\n")
     def NEWLINE(self, _):
         self.lineno += 1
 
     def error(self, t):
-        print(f"Line {self.lineno}: Bad character \"{t.value[0]}\"")
+        print(f'Line {self.lineno}: Bad character "{t.value[0]}"')
         self.index += 1
