@@ -11,23 +11,16 @@ class Parser(SLYParser):
     debugfile = get_absolute_path(f"data/parser/debug/parser.out")
 
     precedence = (
+        ("nonassoc", "IFX"),
+        ("nonassoc", "ELSE"),
         ("nonassoc", "ADDASSIGN", "SUBASSIGN", "MULASSIGN", "DIVASSIGN"),
         ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ"),
         ("left", "+", "-", "DOTPLUS", "DOTMINUS"),
         ("left", "*", "/", "DOTTIMES", "DOTDIVIDE"),
-        ("right", "\'"),
-        ("right", "UMINUS")
+        ("right", "UMINUS", "\'"),
     )
 
-    @_("")
-    def empty(self, p):
-        pass
-
-    @_("empty")
-    def start(self, p):
-        pass
-
-    @_("statement start", "'{' start '}' start")
+    @_("block start", "block")
     def start(self, p):
         pass
 
@@ -35,7 +28,7 @@ class Parser(SLYParser):
     def expression(self, p):
         pass
 
-    @_("'(' expression ')' ")
+    @_("'(' expression ')'")
     def expression(self, p):
         pass
 
@@ -48,12 +41,11 @@ class Parser(SLYParser):
 
     @_("expression LT expression", "expression GT expression",
        "expression LE expression", "expression GE expression",
-       "expression NEQ expression", "expression EQ expression",
-       "expression '=' expression")
+       "expression NEQ expression", "expression EQ expression")
     def expression(self, p):
         pass
 
-    @_("expression '\''")
+    @_('"\'" expression %prec "\'"')
     def expression(self, p):
         pass
 
@@ -77,7 +69,7 @@ class Parser(SLYParser):
     def expression(self, p):
         pass
 
-    @_("INTNUM", "FLOATNUM", "STRING", "ID", "list")
+    @_("INTNUM", "FLOATNUM", "STRING", "ID")
     def list_element(self, p):
         pass
 
@@ -97,8 +89,10 @@ class Parser(SLYParser):
     def indexes(self, p):
         pass
 
-    @_("IF expression block", "IF expression block ELSE block",
-       "WHILE expression block", "FOR ID '=' range block")
+    @_("IF '(' expression ')' block ELSE block",
+       "WHILE '(' expression ')' block", "FOR ID '=' range block",
+       "IF '(' expression ')' block %prec IFX"
+       )
     def statement(self, p):
         pass
 
@@ -113,8 +107,12 @@ class Parser(SLYParser):
     def statement(self, p):
         pass
 
-    @_("statement", "'{' start '}'")
+    @_("statement", "'{' spread_statements '}'")
     def block(self, p):
+        pass
+
+    @_("statement spread_statements", "statement")
+    def spread_statements(self, p):
         pass
 
     @_("expression ',' prints", "expression")
