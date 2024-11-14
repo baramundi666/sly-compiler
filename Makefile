@@ -20,7 +20,7 @@ parser:
 	@python3 -m src parser example3.m
 	@echo "Parser tests completed"
 
-parser:
+ast:
 	@echo "Running AST tests"
 	@echo "Running AST test: example1.tree"
 	@python3 -m src ast example1.tree
