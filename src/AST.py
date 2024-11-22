@@ -50,8 +50,9 @@ class Eye(Node):
 
 
 class Array(Node):
-    def __init__(self, elements):
+    def __init__(self, elements, other=None):
         self.elements = elements
+        self.other = other
 
 
 class ArrayAccess(Node):
@@ -81,8 +82,9 @@ class ForLoop(Node):
 
 
 class Assignment(Node):
-    def __init__(self, variable, value):
+    def __init__(self, variable, op, value):
         self.variable = variable
+        self.op = op
         self.value = value
 
 

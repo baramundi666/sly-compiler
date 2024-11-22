@@ -70,47 +70,33 @@ class TreePrinter:
 
     @addToClass(AST.Array)
     def printTree(self, indent=0):
-        print_indent(indent, "MATRIX" if any(isinstance(e, list) for e in self.elements) else "VECTOR")
+        if self.other != None:
+            self.elements += self.other
+        print_indent(indent, "VECTOR")
         for element in self.elements:
             if isinstance(element, list):
-                print_indent(indent + 1, "ROW")
-                for item in element:
-                    if isinstance(item, AST.Node):
-                        item.printTree(indent + 2)
-                    else:
-                        # Create appropriate node based on type
-                        AST.IntNum(item).printTree(indent + 2) if isinstance(item, int) else \
-                            AST.FloatNum(item).printTree(indent + 2) if isinstance(item, float) else \
-                                AST.Variable(item).printTree(indent + 2)
-            elif isinstance(element, AST.Node):
-                element.printTree(indent + 1)
+                AST.Array(element).printTree(indent + 1)
             else:
-                # Create appropriate node based on type
-                AST.IntNum(element).printTree(indent + 1) if isinstance(element, int) else \
-                    AST.FloatNum(element).printTree(indent + 1) if isinstance(element, float) else \
-                        AST.Variable(element).printTree(indent + 1)
+                element.printTree(indent + 1)
 
     @addToClass(AST.ArrayAccess)
     def printTree(self, indent=0):
-        print_indent(indent, "ArrayAccess")
-        # Create Variable node if array is a string
+        print_indent(indent, "REF")
         if isinstance(self.array, str):
             AST.Variable(self.array).printTree(indent + 1)
         else:
             self.array.printTree(indent + 1)
-        print_indent(indent + 1, "INDICES")
         for index in self.indexes:
             if isinstance(index, AST.Node):
-                index.printTree(indent + 2)
+                index.printTree(indent + 1)
             else:
-                # Create IntNum node if index is a number
-                AST.IntNum(index).printTree(indent + 2)
+                AST.IntNum(index).printTree(indent + 1)
 
     @addToClass(AST.IfElse)
     def printTree(self, indent=0):
-        print_indent(indent, "IFELSE")
+        print_indent(indent, "IF")
         self.condition.printTree(indent + 1)
-        print_indent(indent + 1, "IF")
+        print_indent(indent + 1, "THEN")
         self.if_block.printTree(indent + 2)
         if self.else_block:
             print_indent(indent + 1, "ELSE")
@@ -131,7 +117,7 @@ class TreePrinter:
 
     @addToClass(AST.Assignment)
     def printTree(self, indent=0):
-        print_indent(indent, "=")
+        print_indent(indent, self.op)
         if isinstance(self.variable, str):
             AST.Variable(self.variable).printTree(indent + 1)
         elif isinstance(self.variable, AST.Node):
@@ -168,7 +154,7 @@ class TreePrinter:
     @addToClass(AST.Block)
     def printTree(self, indent=0):
         for statement in self.statements:
-            if statement:  # Make sure we don't try to print None
+            if statement:
                 statement.printTree(indent)
 
     @addToClass(AST.ArrayRange)

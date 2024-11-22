@@ -95,13 +95,13 @@ class Parser(SLYParser):
     @_("spread_elements ',' list_element", "list_element")
     def spread_elements(self, p):
         if len(p) == 3:
-            return p.spread_elements + [p.list_element]
+            return AST.Array(p.spread_elements, [p.list_element])
         else:
-            return [p.list_element]
+            return AST.Array([p.list_element])
 
     @_("list ',' '[' spread_elements ']'", "'[' spread_elements ']'")
     def list(self, p):
-        return [p.spread_elements]
+        return AST.Array([p.spread_elements])
 
     @_("INTNUM", "FLOATNUM", "STRING", "ID")
     def list_element(self, p):
@@ -130,25 +130,13 @@ class Parser(SLYParser):
     def statement(self, p):
         return AST.ForLoop(AST.Variable(p.ID), p.range, AST.Block(p.block))
 
-    @_("assignable '=' expression ';'")
+    @_("assignable '=' expression ';'",
+       "assignable ADDASSIGN expression ';'",
+       "assignable SUBASSIGN expression ';'",
+       "assignable MULASSIGN expression ';'",
+       "assignable DIVASSIGN expression ';'")
     def statement(self, p):
-        return AST.Assignment(p.assignable, p.expression)
-
-    @_("assignable ADDASSIGN expression ';'")
-    def statement(self, p):
-        return AST.Assignment(p.assignable, AST.BinExpr("+", p.assignable, p.expression))
-
-    @_("assignable SUBASSIGN expression ';'")
-    def statement(self, p):
-        return AST.Assignment(p.assignable, AST.BinExpr("-", p.assignable, p.expression))
-
-    @_("assignable MULASSIGN expression ';'")
-    def statement(self, p):
-        return AST.Assignment(p.assignable, AST.BinExpr("*", p.assignable, p.expression))
-
-    @_("assignable DIVASSIGN expression ';'")
-    def statement(self, p):
-        return AST.Assignment(p.assignable, AST.BinExpr("/", p.assignable, p.expression))
+        return AST.Assignment(p.assignable, p[1], p.expression)
 
     @_("RETURN expression ';'")
     def statement(self, p):
