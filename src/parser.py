@@ -12,7 +12,6 @@ class Parser(SLYParser):
     precedence = (
         ("nonassoc", "IFX"),
         ("nonassoc", "ELSE"),
-        ("nonassoc", "ADDASSIGN", "SUBASSIGN", "MULASSIGN", "DIVASSIGN"),
         ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ"),
         ("left", "+", "-", "DOTPLUS", "DOTMINUS"),
         ("left", "*", "/", "DOTTIMES", "DOTDIVIDE"),
@@ -64,11 +63,7 @@ class Parser(SLYParser):
     def expression(self, p):
         return AST.BinExpr(p[1], p.expression0, p.expression1)
 
-    @_("'\'' expression %prec '\''")
-    def expression(self, p):
-        return AST.Transpose(p.expression)
-
-    @_("expression '''")
+    @_("expression '\''")
     def expression(self, p):
         return AST.Transpose(p.expression)
 
