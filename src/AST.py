@@ -54,6 +54,10 @@ class Array(Node):
         self.elements = elements
         self.other = other
 
+class Spread(Node):
+    def __init__(self, element, next=None):
+        self.element = element
+        self.next = next
 
 class ArrayAccess(Node):
     def __init__(self, array, indexes):
@@ -107,8 +111,15 @@ class Print(Node):
 
 
 class Block(Node):
-    def __init__(self, statements):
-        self.statements = statements
+    def __init__(self, statement, next_statements=None):
+        self.statement = statement
+        self.next_statements = next_statements
+
+
+class Statement(Node):
+    def __init__(self, statement, next_statements=None):
+        self.statement = statement
+        self.next_statements = next_statements
 
 
 class ArrayRange(Node):

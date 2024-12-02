@@ -70,27 +70,25 @@ class TreePrinter:
 
     @addToClass(AST.Array)
     def printTree(self, indent=0):
-        if self.other != None:
-            self.elements += self.other
         print_indent(indent, "VECTOR")
-        for element in self.elements:
-            if isinstance(element, list):
-                AST.Array(element).printTree(indent + 1)
-            else:
-                element.printTree(indent + 1)
+        self.elements.printTree(indent+1)
+        if self.other is not None:
+            self.other.printTree(indent)
+
+
+    @addToClass(AST.Spread)
+    def printTree(self, indent=0):
+        self.element.printTree(indent)
+        if self.next is not None:
+            self.next.printTree(indent)
+
 
     @addToClass(AST.ArrayAccess)
     def printTree(self, indent=0):
         print_indent(indent, "REF")
-        if isinstance(self.array, str):
-            AST.Variable(self.array).printTree(indent + 1)
-        else:
-            self.array.printTree(indent + 1)
+        self.array.printTree(indent + 1)
         for index in self.indexes:
-            if isinstance(index, AST.Node):
-                index.printTree(indent + 1)
-            else:
-                AST.IntNum(index).printTree(indent + 1)
+            index.printTree(indent + 1)
 
     @addToClass(AST.IfElse)
     def printTree(self, indent=0):
@@ -118,19 +116,9 @@ class TreePrinter:
     @addToClass(AST.Assignment)
     def printTree(self, indent=0):
         print_indent(indent, self.op)
-        if isinstance(self.variable, str):
-            AST.Variable(self.variable).printTree(indent + 1)
-        elif isinstance(self.variable, AST.Node):
-            self.variable.printTree(indent + 1)
-        else:
-            print_indent(indent + 1, str(self.variable))
+        self.variable.printTree(indent + 1)
+        self.value.printTree(indent + 1)
 
-        if isinstance(self.value, AST.Node):
-            self.value.printTree(indent + 1)
-        else:
-            AST.IntNum(self.value).printTree(indent + 1) if isinstance(self.value, int) else \
-                AST.FloatNum(self.value).printTree(indent + 1) if isinstance(self.value, float) else \
-                    print_indent(indent + 1, str(self.value))
 
     @addToClass(AST.Return)
     def printTree(self, indent=0):
@@ -148,14 +136,19 @@ class TreePrinter:
     @addToClass(AST.Print)
     def printTree(self, indent=0):
         print_indent(indent, "PRINT")
-        for expression in self.expressions:
-            expression.printTree(indent + 1)
+        self.expressions.printTree(indent + 1)
 
     @addToClass(AST.Block)
     def printTree(self, indent=0):
-        for statement in self.statements:
-            if statement:
-                statement.printTree(indent)
+        self.statement.printTree(indent)
+        if self.next_statements is not None:
+            self.next_statements.printTree(indent)
+
+    @addToClass(AST.Statement)
+    def printTree(self, indent=0):
+        self.statement.printTree(indent)
+        if self.next_statements is not None:
+            self.next_statements.printTree(indent)
 
     @addToClass(AST.ArrayRange)
     def printTree(self, indent=0):

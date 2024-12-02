@@ -7,7 +7,7 @@ from tree_printer import TreePrinter
 
 
 def main():
-    default = ("ast", "example1.m")
+    default = ("ast", "example3.m")
     lab = sys.argv[1] if len(sys.argv) == 3 else default[0]
     file_name = sys.argv[2] if len(sys.argv) == 3 else default[1]
     path = get_absolute_path(f"data/{lab}/{file_name}")

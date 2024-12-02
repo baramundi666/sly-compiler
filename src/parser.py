@@ -20,8 +20,8 @@ class Parser(SLYParser):
 
     @_("block start", "block")
     def start(self, p):
-        if hasattr(p, 'block') and hasattr(p, 'start'):
-            return AST.Block(p.block + p.start.statements)
+        if len(p) == 2:
+            return AST.Block(p.block, p.start)
         return AST.Block(p.block)
 
     @_("ID")
@@ -87,27 +87,37 @@ class Parser(SLYParser):
     def expression(self, p):
         return AST.Array(p.list)
 
-    @_("spread_elements ',' list_element", "list_element")
+    @_("list_element ',' spread_elements", "list_element")
     def spread_elements(self, p):
-        if len(p) == 3:
-            return AST.Array(p.spread_elements, [p.list_element])
-        else:
-            return AST.Array([p.list_element])
+        if len(p) == 1:
+            return AST.Spread(p.list_element)
+        return AST.Spread(p.list_element, p.spread_elements)
 
-    @_("list ',' '[' spread_elements ']'", "'[' spread_elements ']'")
+    @_("'[' spread_elements ']' ',' list", "'[' spread_elements ']'")
     def list(self, p):
-        return AST.Array([p.spread_elements])
+        if len(p) == 5:
+            return AST.Array(p.spread_elements, p.list)
+        return AST.Array(p.spread_elements)
 
-    @_("INTNUM", "FLOATNUM", "STRING", "ID")
+
+    @_("INTNUM")
     def list_element(self, p):
-        if isinstance(p[0], int):
-            return AST.IntNum(p[0])
-        elif isinstance(p[0], float):
-            return AST.FloatNum(p[0])
-        elif p[0][0] in ('"', "'"):  # Check for string literals
-            return AST.String(p[0])
-        else:
-            return AST.Variable(p[0])
+        return AST.IntNum(p[0])
+
+    @_("FLOATNUM")
+    def list_element(self, p):
+        return AST.FloatNum(p[0])
+
+
+    @_("STRING")
+    def list_element(self, p):
+        return AST.String(p[0])
+
+
+    @_("ID")
+    def list_element(self, p):
+        return AST.Variable(p[0])
+
 
     @_("IF '(' expression ')' block ELSE block")
     def statement(self, p):
@@ -147,8 +157,7 @@ class Parser(SLYParser):
 
     @_("expression ';'")
     def statement(self, p):
-        if isinstance(p.expression, (AST.Zeros, AST.Ones, AST.Eye)):
-            return p.expression
+        return p.expression
 
     @_("PRINT prints ';'")
     def statement(self, p):
@@ -156,22 +165,22 @@ class Parser(SLYParser):
 
     @_("statement", "'{' spread_statements '}'")
     def block(self, p):
-        if len(p) == 1:
-            return [p.statement]
-        return p.spread_statements
+        if len(p) == 3:
+            return AST.Statement(p.spread_statements)
+        return AST.Statement(p.statement)
 
     @_("statement spread_statements", "statement")
     def spread_statements(self, p):
         if len(p) == 2:
-            return [p.statement] + p.spread_statements
-        return [p.statement]
+            return AST.Statement(p.statement, p.spread_statements)
+        return AST.Statement(p.statement)
 
     @_("expression ',' prints", "expression")
     def prints(self, p):
         if len(p) == 3:
-            return [p.expression] + p.prints
+            return AST.Spread(p.expression, p.prints)
         else:
-            return [p.expression]
+            return AST.Spread(p.expression)
 
     @_("INTNUM ':' INTNUM", "ID ':' ID", "ID ':' INTNUM", "INTNUM ':' ID")
     def range(self, p):
@@ -182,9 +191,9 @@ class Parser(SLYParser):
     @_("ID", "ID '[' indexes ']'")
     def assignable(self, p):
         if len(p) == 1:
-            return AST.Variable(p[0])
+            return AST.Variable(p.ID)
         else:
-            return AST.ArrayAccess(p[0], p.indexes)
+            return AST.ArrayAccess(AST.Variable(p.ID), p.indexes)
 
     @_("INTNUM ',' indexes", "INTNUM")
     def indexes(self, p):
