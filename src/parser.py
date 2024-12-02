@@ -44,10 +44,6 @@ class Parser(SLYParser):
     def expression(self, p):
         pass
 
-    @_("'\'' expression %prec '\''")
-    def expression(self, p):
-        pass
-
     @_("expression '\''")
     def expression(self, p):
         pass
