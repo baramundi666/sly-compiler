@@ -13,7 +13,6 @@ class Parser(SLYParser):
     precedence = (
         ("nonassoc", "IFX"),
         ("nonassoc", "ELSE"),
-        ("nonassoc", "ADDASSIGN", "SUBASSIGN", "MULASSIGN", "DIVASSIGN"),
         ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ"),
         ("left", "+", "-", "DOTPLUS", "DOTMINUS"),
         ("left", "*", "/", "DOTTIMES", "DOTDIVIDE"),
