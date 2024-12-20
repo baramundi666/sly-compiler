@@ -2,25 +2,29 @@ class Node(object):
     def __init__(self, lineno):
         self.lineno = lineno
 
-    def visit(self, visitor):
+    def visit(self, visitor)->'BaseType':
         func = getattr(visitor, f"visit_{self.__class__.__name__}")
         return func(self)
 
+
 class IntNum(Node):
-    def __init__(self, value, lineno=0):
+    def __init__(self, value, typeOfValue='intnum', lineno=0):
         super().__init__(lineno)
+        self.typeOfValue = typeOfValue
         self.value = value
 
 
 class FloatNum(Node):
-    def __init__(self, value, lineno=0):
+    def __init__(self, value, typeOfValue='floatnum', lineno=0):
         super().__init__(lineno)
+        self.typeOfValue = typeOfValue
         self.value = value
 
 
 class String(Node):
-    def __init__(self, value, lineno=0):
+    def __init__(self, value, typeOfValue='string', lineno=0):
         super().__init__(lineno)
+        self.typeOfValue = typeOfValue
         self.value = value
 
 
@@ -45,21 +49,21 @@ class Transpose(Node):
 
 
 class Zeros(Node):
-    def __init__(self, size, lineno=0):
+    def __init__(self, sizes, lineno=0):
         super().__init__(lineno)
-        self.size = size
+        self.sizes = sizes
 
 
 class Ones(Node):
-    def __init__(self, size, lineno=0):
+    def __init__(self, sizes, lineno=0):
         super().__init__(lineno)
-        self.size = size
+        self.sizes = sizes
 
 
 class Eye(Node):
-    def __init__(self, size, lineno=0):
+    def __init__(self, sizes, lineno=0):
         super().__init__(lineno)
-        self.size = size
+        self.sizes = sizes
 
 
 class Array(Node):
@@ -68,11 +72,13 @@ class Array(Node):
         self.elements = elements
         self.other = other
 
+
 class Spread(Node):
     def __init__(self, element, next=None, lineno=0):
         super().__init__(lineno)
         self.element = element
         self.next = next
+
 
 class ArrayAccess(Node):
     def __init__(self, array, indexes, lineno=0):

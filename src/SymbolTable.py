@@ -1,20 +1,3 @@
-from enum import Enum, auto
-
-class MType(Enum):
-    INTNUM = auto()
-    FLOATNUM = auto()
-    STRING = auto()
-    VECTOR = auto()
-    MATRIX = auto()
-    BOOLEAN = auto()
-    RANGE = auto()
-    NULL = auto()
-    UNKNOWN = auto()
-
-    @staticmethod
-    def is_numeric(mtype):
-        return mtype in [MType.FLOATNUM, MType.INTNUM]
-
 class VariableSymbol(object):
     def __init__(self, name, typeOfVariable):
         self.name = name
@@ -47,8 +30,11 @@ class SymbolTable(object):
     def popScope(self):
         self.scopes.pop()
 
-    def modifyLoopCount(self, delta):
-        self.loopDepth += delta
+    def enterLoop(self):
+        self.loopDepth += 1
+
+    def escapeLoop(self):
+        self.loopDepth -= 1
 
     def isInsideLoop(self):
         return self.loopDepth > 0
@@ -58,38 +44,38 @@ class TypeTable(object):
         self.typeTable = {}
 
         self.typeTable["+"] = {}
-        self.typeTable["+"][MType.INTNUM] = {}
-        self.typeTable["+"][MType.INTNUM][MType.INTNUM] = MType.INTNUM
-        self.typeTable["+"][MType.INTNUM][MType.FLOATNUM] = MType.FLOATNUM
-        self.typeTable["+"][MType.FLOATNUM] = {}
-        self.typeTable["+"][MType.FLOATNUM][MType.INTNUM] = MType.FLOATNUM
-        self.typeTable["+"][MType.FLOATNUM][MType.FLOATNUM] = MType.FLOATNUM
+        self.typeTable["+"]["intnum"] = {}
+        self.typeTable["+"]["intnum"]["intnum"] = "intnum"
+        self.typeTable["+"]["intnum"]["floatnum"] = "floatnum"
+        self.typeTable["+"]["floatnum"] = {}
+        self.typeTable["+"]["floatnum"]["intnum"] = "floatnum"
+        self.typeTable["+"]["floatnum"]["floatnum"] = "floatnum"
         self.typeTable["+"]["string"] = {}
         self.typeTable["+"]["string"]["string"] = "string"
 
         self.typeTable["-"] = {}
-        self.typeTable["-"][MType.INTNUM] = {}
-        self.typeTable["-"][MType.INTNUM][MType.INTNUM] = MType.INTNUM
-        self.typeTable["-"][MType.INTNUM][MType.FLOATNUM] = MType.FLOATNUM
-        self.typeTable["-"][MType.FLOATNUM] = {}
-        self.typeTable["-"][MType.FLOATNUM][MType.INTNUM] = MType.FLOATNUM
-        self.typeTable["-"][MType.FLOATNUM][MType.FLOATNUM] = MType.FLOATNUM
+        self.typeTable["-"]["intnum"] = {}
+        self.typeTable["-"]["intnum"]["intnum"] = "intnum"
+        self.typeTable["-"]["intnum"]["floatnum"] = "floatnum"
+        self.typeTable["-"]["floatnum"] = {}
+        self.typeTable["-"]["floatnum"]["intnum"] = "floatnum"
+        self.typeTable["-"]["floatnum"]["floatnum"] = "floatnum"
 
         self.typeTable["*"] = {}
-        self.typeTable["*"][MType.INTNUM] = {}
-        self.typeTable["*"][MType.INTNUM][MType.INTNUM] = MType.INTNUM
-        self.typeTable["*"][MType.INTNUM][MType.FLOATNUM] = MType.FLOATNUM
-        self.typeTable["*"][MType.FLOATNUM] = {}
-        self.typeTable["*"][MType.FLOATNUM][MType.INTNUM] = MType.FLOATNUM
-        self.typeTable["*"][MType.FLOATNUM][MType.FLOATNUM] = MType.FLOATNUM
+        self.typeTable["*"]["intnum"] = {}
+        self.typeTable["*"]["intnum"]["intnum"] = "intnum"
+        self.typeTable["*"]["intnum"]["floatnum"] = "floatnum"
+        self.typeTable["*"]["floatnum"] = {}
+        self.typeTable["*"]["floatnum"]["intnum"] = "floatnum"
+        self.typeTable["*"]["floatnum"]["floatnum"] = "floatnum"
 
         self.typeTable["/"] = {}
-        self.typeTable["/"][MType.INTNUM] = {}
-        self.typeTable["/"][MType.INTNUM][MType.INTNUM] = MType.FLOATNUM
-        self.typeTable["/"][MType.INTNUM][MType.FLOATNUM] = MType.FLOATNUM
-        self.typeTable["/"][MType.FLOATNUM] = {}
-        self.typeTable["/"][MType.FLOATNUM][MType.INTNUM] = MType.FLOATNUM
-        self.typeTable["/"][MType.FLOATNUM][MType.FLOATNUM] = MType.FLOATNUM
+        self.typeTable["/"]["intnum"] = {}
+        self.typeTable["/"]["intnum"]["intnum"] = "floatnum"
+        self.typeTable["/"]["intnum"]["floatnum"] = "floatnum"
+        self.typeTable["/"]["floatnum"] = {}
+        self.typeTable["/"]["floatnum"]["intnum"] = "floatnum"
+        self.typeTable["/"]["floatnum"]["floatnum"] = "floatnum"
 
         self.typeTable[".+"] = self.typeTable["+"]
         self.typeTable[".-"] = self.typeTable["-"]
@@ -97,12 +83,12 @@ class TypeTable(object):
         self.typeTable["./"] = self.typeTable["/"]
 
         self.typeTable["<"] = {}
-        self.typeTable["<"][MType.INTNUM] = {}
-        self.typeTable["<"][MType.INTNUM][MType.INTNUM] = MType.BOOLEAN
-        self.typeTable["<"][MType.INTNUM][MType.FLOATNUM] = MType.BOOLEAN
-        self.typeTable["<"][MType.FLOATNUM] = {}
-        self.typeTable["<"][MType.FLOATNUM][MType.INTNUM] = MType.BOOLEAN
-        self.typeTable["<"][MType.FLOATNUM][MType.FLOATNUM] = MType.BOOLEAN
+        self.typeTable["<"]["intnum"] = {}
+        self.typeTable["<"]["intnum"]["intnum"] = "boolean"
+        self.typeTable["<"]["intnum"]["floatnum"] = "boolean"
+        self.typeTable["<"]["floatnum"] = {}
+        self.typeTable["<"]["floatnum"]["intnum"] = "boolean"
+        self.typeTable["<"]["floatnum"]["floatnum"] = "boolean"
 
         self.typeTable[">"] = self.typeTable["<"]
         self.typeTable["<="] = self.typeTable["<"]

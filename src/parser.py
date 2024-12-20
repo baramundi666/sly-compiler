@@ -71,21 +71,25 @@ class Parser(SLYParser):
     def expression(self, p):
         return AST.BinExpr("-", AST.IntNum(0), p.expression,lineno=p.lineno)
 
-    @_("ZEROS '(' expression ')' ")
+    @_("ZEROS '(' indexes ')' ")
     def expression(self, p):
-        return AST.Zeros(p.expression,lineno=p.lineno)
+        return AST.Zeros(p.indexes,lineno=p.lineno)
 
-    @_("ONES '(' expression ')' ")
+    @_("ONES '(' indexes ')' ")
     def expression(self, p):
-        return AST.Ones(p.expression,lineno=p.lineno)
+        return AST.Ones(p.indexes,lineno=p.lineno)
 
-    @_("EYE '(' expression ')'")
+    @_("EYE '(' indexes ')'")
     def expression(self, p):
-        return AST.Eye(p.expression,lineno=p.lineno)
+        return AST.Eye(p.indexes,lineno=p.lineno)
 
     @_("'[' list ']'")
     def expression(self, p):
         return AST.Array(p.list,lineno=p.lineno)
+
+    @_("ID '[' indexes ']'")
+    def expression(self, p):
+        return AST.ArrayAccess(AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno)
 
     @_("list_element ',' spread_elements", "list_element")
     def spread_elements(self, p):
@@ -93,7 +97,7 @@ class Parser(SLYParser):
             return AST.Spread(p.list_element,lineno=p.lineno)
         return AST.Spread(p.list_element, p.spread_elements,lineno=p.lineno)
 
-    @_("'[' spread_elements ']' ',' list", "'[' spread_elements ']'")
+    @_("'[' spread_elements ']' ',' list", "'[' spread_elements ']'", "spread_elements")
     def list(self, p):
         if len(p) == 5:
             return AST.Array(p.spread_elements, p.list,lineno=p.lineno)
@@ -139,7 +143,7 @@ class Parser(SLYParser):
        "assignable ADDASSIGN expression ';'",
        "assignable SUBASSIGN expression ';'",
        "assignable MULASSIGN expression ';'",
-       "assignable DIVASSIGN expression ';'")
+       "assignable DIVASSIGN expression ';'",)
     def statement(self, p):
         return AST.Assignment(p.assignable, p[1], p.expression,lineno=p.lineno)
 
