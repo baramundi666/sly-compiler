@@ -202,6 +202,6 @@ class Parser(SLYParser):
     @_("INTNUM ',' indexes", "INTNUM")
     def indexes(self, p):
         if len(p) == 1:
-            return [AST.IntNum(p[0],lineno=p.lineno)]
+            return [AST.IntNum(int(p[0]),lineno=p.lineno)]
         else:
-            return [AST.IntNum(p[0],lineno=p.lineno)] + p.indexes
+            return [AST.IntNum(int(p[0]),lineno=p.lineno)] + p.indexes
