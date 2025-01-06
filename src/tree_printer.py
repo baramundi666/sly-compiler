@@ -47,26 +47,20 @@ class TreePrinter:
     @addToClass(AST.Zeros)
     def printTree(self, indent=0):
         print_indent(indent, "ZEROS")
-        if isinstance(self.size, AST.Node):
-            self.size.printTree(indent + 1)
-        else:
-            print_indent(indent + 1, str(self.size))
+        for index in self.sizes:
+            index.printTree(indent + 1)
 
     @addToClass(AST.Ones)
     def printTree(self, indent=0):
         print_indent(indent, "ONES")
-        if isinstance(self.size, AST.Node):
-            self.size.printTree(indent + 1)
-        else:
-            print_indent(indent + 1, str(self.size))
+        for index in self.sizes:
+            index.printTree(indent + 1)
 
     @addToClass(AST.Eye)
     def printTree(self, indent=0):
         print_indent(indent, "EYE")
-        if isinstance(self.size, AST.Node):
-            self.size.printTree(indent + 1)
-        else:
-            print_indent(indent + 1, str(self.size))
+        for index in self.sizes:
+            index.printTree(indent + 1)
 
     @addToClass(AST.Array)
     def printTree(self, indent=0):
