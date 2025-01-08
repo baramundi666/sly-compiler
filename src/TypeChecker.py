@@ -101,7 +101,7 @@ class TypeChecker(NodeVisitor):
         return ScalarType(node.typeOfValue, value=node.value)
 
     def visit_String(self, node: String):
-        return ScalarType(node.value, value=node.value)
+        return ScalarType("string", value=node.value)
 
     def visit_Variable(self, node: Variable):
         id = self.scopes.get(node.name)

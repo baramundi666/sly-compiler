@@ -1,5 +1,6 @@
 import sys
 
+from src.Interpreter import Interpreter
 from src.TypeChecker import TypeChecker
 from src.parser import Parser
 from src.scanner import Scanner
@@ -8,7 +9,7 @@ from tree_printer import TreePrinter
 
 
 def main():
-    default = ("tc", "opers.m")
+    default = ("interpreter", "triangle.m")
     lab = sys.argv[1] if len(sys.argv) == 3 else default[0]
     file_name = sys.argv[2] if len(sys.argv) == 3 else default[1]
     path = get_absolute_path(f"data/{lab}/{file_name}")
@@ -27,6 +28,10 @@ def main():
             test_ast(text)
         case "tc":
             test_type_checker(text)
+        case "interpreter":
+            test_interpreter(text)
+        case _:
+            print(f"Invalid lab argument: {lab}")
 
 
 def test_ast(text):
@@ -54,6 +59,14 @@ def test_type_checker(text):
     tc = TypeChecker()
     tc.visit(ast)
 
+def test_interpreter(text):
+    lexer = Scanner()
+    parser = Parser()
+    ast = parser.parse(lexer.tokenize(text))
+    tc = TypeChecker()
+    tc.visit(ast)
+    interpreter = Interpreter()
+    ast.accept(interpreter)
 
 
 if __name__ == "__main__":
