@@ -2,9 +2,12 @@ class Node(object):
     def __init__(self, lineno):
         self.lineno = lineno
 
-    def visit(self, visitor)->'BaseType':
-        func = getattr(visitor, f"visit_{self.__class__.__name__}")
-        return func(self)
+    def visit(self, visitor):
+        try:
+            func = getattr(visitor, f"visit_{self.__class__.__name__}")
+            return func(self)
+        except AttributeError:
+            print(f"Visitor {visitor.__class__.__name__} does not have visit_{self.__class__.__name__} implemented")
 
 
 class IntNum(Node):

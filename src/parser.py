@@ -30,7 +30,9 @@ class Parser(SLYParser):
 
     @_("STRING")
     def expression(self, p):
-        return AST.String(p.STRING,lineno=p.lineno)
+        condition = p.STRING[0] == p.STRING[-1] == '"' or p.STRING[0] == p.STRING[-1] == "'"
+        parsed_string =  p.STRING[1:-1] if condition else p.STRING
+        return AST.String(parsed_string,lineno=p.lineno)
 
     @_("INTNUM")
     def expression(self, p):
@@ -115,7 +117,9 @@ class Parser(SLYParser):
 
     @_("STRING")
     def list_element(self, p):
-        return AST.String(p[0],lineno=p.lineno)
+        condition = p.STRING[0] == p.STRING[-1] == '"' or p.STRING[0] == p.STRING[-1] == "'"
+        parsed_string =  p.STRING[1:-1] if condition else p.STRING
+        return AST.String(parsed_string,lineno=p.lineno)
 
 
     @_("ID")
@@ -188,8 +192,8 @@ class Parser(SLYParser):
 
     @_("INTNUM ':' INTNUM", "ID ':' ID", "ID ':' INTNUM", "INTNUM ':' ID")
     def range(self, p):
-        tmp1 = AST.IntNum(p[0],lineno=p.lineno) if isinstance(p[0], int) else AST.Variable(p[0],lineno=p.lineno)
-        tmp2 = AST.IntNum(p[2],lineno=p.lineno) if isinstance(p[2], int) else AST.Variable(p[2],lineno=p.lineno)
+        tmp1 = AST.IntNum(int(p[0]),lineno=p.lineno) if p[0].isnumeric() else AST.Variable(p[0],lineno=p.lineno)
+        tmp2 = AST.IntNum(int(p[2]),lineno=p.lineno) if p[2].isnumeric() else AST.Variable(p[2],lineno=p.lineno)
         return AST.ArrayRange(tmp1, tmp2,lineno=p.lineno)
 
     @_("ID", "ID '[' indexes ']'")

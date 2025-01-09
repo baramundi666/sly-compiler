@@ -65,9 +65,12 @@ class TypeTable(object):
         self.typeTable["*"]["intnum"] = {}
         self.typeTable["*"]["intnum"]["intnum"] = "intnum"
         self.typeTable["*"]["intnum"]["floatnum"] = "floatnum"
+        self.typeTable["*"]["intnum"]["string"] = "string"
         self.typeTable["*"]["floatnum"] = {}
         self.typeTable["*"]["floatnum"]["intnum"] = "floatnum"
         self.typeTable["*"]["floatnum"]["floatnum"] = "floatnum"
+        self.typeTable["*"]["string"] = {}
+        self.typeTable["*"]["string"]["intnum"] = "string"
 
         self.typeTable["/"] = {}
         self.typeTable["/"]["intnum"] = {}

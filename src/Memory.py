@@ -5,7 +5,7 @@ class Memory:
         self.scope = dict()
 
     def has_key(self, name):  # variable name
-        return name in self.scope
+        return name in self.scope and self.scope[name] is not None
 
     def get(self, name):         # gets from memory current value of variable <name>
         if self.has_key(name):
@@ -25,7 +25,7 @@ class MemoryStack:
 
     def get(self, name):             # gets from memory stack current value of variable <name>
         if self.top_memory.has_key(name):
-            self.top_memory.get(name)
+            return self.top_memory.get(name)
 
     def insert(self, name, value): # inserts into memory stack variable <name> with value <value>
         self.top_memory.put(name, value)
