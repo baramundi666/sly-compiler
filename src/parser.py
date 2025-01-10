@@ -1,5 +1,5 @@
 from sly import Parser as SLYParser
-from src import AST
+import src.AST as AST
 from src.scanner import Scanner
 from src.utils import get_absolute_path
 

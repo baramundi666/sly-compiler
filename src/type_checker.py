@@ -1,7 +1,7 @@
 from src.AST import BinExpr, String, FloatNum, IntNum, Transpose, Zeros, Array, Block, Statement, Continue, Break, \
     Return, Assignment, Variable, ArrayRange, ForLoop, WhileLoop, IfElse, ArrayAccess, Spread, Print
-from src.SymbolTable import SymbolTable, TypeTable
-from src.Types import *
+from src.symbol_table import SymbolTable, TypeTable
+from src.types import *
 
 
 class NodeVisitor(object):

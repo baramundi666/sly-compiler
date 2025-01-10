@@ -1,10 +1,10 @@
 
 import src.AST as AST
-from src.SymbolTable import TypeTable
-from src.Memory import *
-from src.Exceptions import  *
-from src.OperationMap import OperationMap
-from src.Types import *
+from src.symbol_table import TypeTable
+from src.memory import *
+from src.exceptions import  *
+from src.operation_map import OperationMap
+from src.types import *
 from src.visitor import *
 import sys
 

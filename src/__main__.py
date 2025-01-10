@@ -1,11 +1,11 @@
 import sys
 
-from src.Interpreter import Interpreter
-from src.TypeChecker import TypeChecker, ErrorType
+from src.interpreter import Interpreter
+from src.type_checker import TypeChecker, ErrorType
 from src.parser import Parser
 from src.scanner import Scanner
 from src.utils import get_absolute_path
-from tree_printer import TreePrinter
+from src.tree_printer import TreePrinter
 
 
 def main():
