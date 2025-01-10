@@ -7,25 +7,27 @@ class Node(object):
             func = getattr(visitor, f"visit_{self.__class__.__name__}")
             return func(self)
         except AttributeError:
-            print(f"Visitor {visitor.__class__.__name__} does not have visit_{self.__class__.__name__} implemented")
+            print(
+                f"Visitor {visitor.__class__.__name__} does not have visit_{self.__class__.__name__} implemented"
+            )
 
 
 class IntNum(Node):
-    def __init__(self, value, typeOfValue='intnum', lineno=0):
+    def __init__(self, value, typeOfValue="intnum", lineno=0):
         super().__init__(lineno)
         self.typeOfValue = typeOfValue
         self.value = value
 
 
 class FloatNum(Node):
-    def __init__(self, value, typeOfValue='floatnum', lineno=0):
+    def __init__(self, value, typeOfValue="floatnum", lineno=0):
         super().__init__(lineno)
         self.typeOfValue = typeOfValue
         self.value = value
 
 
 class String(Node):
-    def __init__(self, value, typeOfValue='string', lineno=0):
+    def __init__(self, value, typeOfValue="string", lineno=0):
         super().__init__(lineno)
         self.typeOfValue = typeOfValue
         self.value = value

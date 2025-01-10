@@ -3,15 +3,18 @@ class VariableSymbol(object):
         self.name = name
         self.typeOfVariable = typeOfVariable
 
+
 class SymbolTable(object):
-    def __init__(self): # parent scope and symbol table name
+    def __init__(self):  # parent scope and symbol table name
         self.scopes = [{}]
         self.loopDepth = 0
 
-    def put(self, name, typeOfValue): # put variable symbol or fundef under <name> entry
+    def put(
+        self, name, typeOfValue
+    ):  # put variable symbol or fundef under <name> entry
         self.scopes[-1][name] = typeOfValue
 
-    def get(self, name): # get variable symbol or fundef from <name> entry
+    def get(self, name):  # get variable symbol or fundef from <name> entry
         for scope_idx in range(len(self.scopes) - 1, -1, -1):
             if name in self.scopes[scope_idx]:
                 return self.scopes[scope_idx][name]
@@ -38,6 +41,7 @@ class SymbolTable(object):
 
     def isInsideLoop(self):
         return self.loopDepth > 0
+
 
 class TypeTable(object):
     def __init__(self):

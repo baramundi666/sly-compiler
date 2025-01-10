@@ -33,6 +33,7 @@ def main():
         case _:
             print(f"Invalid lab argument: {lab}")
 
+
 def test_interpreter(text):
     lexer = Scanner()
     parser = Parser()
@@ -44,12 +45,14 @@ def test_interpreter(text):
     interpreter = Interpreter()
     interpreter.visit(ast)
 
+
 def test_type_checker(text):
     lexer = Scanner()
     parser = Parser()
     ast = parser.parse(lexer.tokenize(text))
     tc = TypeChecker()
     tc.visit(ast)
+
 
 def test_ast(text):
     lexer = Scanner()
@@ -58,10 +61,12 @@ def test_ast(text):
     TreePrinter()
     ast.printTree()
 
+
 def test_parser(text):
     lexer = Scanner()
     parser = Parser()
     parser.parse(lexer.tokenize(text))
+
 
 def test_scanner(text):
     lexer = Scanner()

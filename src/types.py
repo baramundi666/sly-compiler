@@ -1,5 +1,7 @@
 class BaseType(object):
-    def __init__(self, entityType, typeOfValue=None, shapeOfValue=None, content=None, name=None):
+    def __init__(
+        self, entityType, typeOfValue=None, shapeOfValue=None, content=None, name=None
+    ):
         self.entityType = entityType
         self.typeOfValue = typeOfValue
         self.shapeOfValue = shapeOfValue
@@ -9,16 +11,20 @@ class BaseType(object):
 
 class ScalarType(BaseType):
     def __init__(self, typeOfValue, value, name=None):
-        super().__init__("scalar", typeOfValue=typeOfValue, shapeOfValue=(), content=value, name=name)
+        super().__init__(
+            "scalar", typeOfValue=typeOfValue, shapeOfValue=(), content=value, name=name
+        )
 
     @staticmethod
-    def columns(self): return 1
+    def columns(self):
+        return 1
 
 
 class ErrorType(BaseType):
     def __init__(self, reason):
         super().__init__(entityType="error", content=reason)
         print(reason)
+
 
 class SuccessType(BaseType):
     def __init__(self):
@@ -32,7 +38,12 @@ class UndefinedType(BaseType):
 
 class VectorType(BaseType):
     def __init__(self, typeOfValue, length, value):
-        super().__init__(entityType='vector', typeOfValue=typeOfValue, shapeOfValue=(length,), content=value)
+        super().__init__(
+            entityType="vector",
+            typeOfValue=typeOfValue,
+            shapeOfValue=(length,),
+            content=value,
+        )
 
     def rows(self):
         return 1
@@ -48,7 +59,13 @@ class VectorType(BaseType):
 
 class MatrixType(BaseType):
     def __init__(self, typeOfValue, rows, columns, value, name=None):
-        super().__init__("matrix", typeOfValue=typeOfValue, shapeOfValue=(rows, columns), content=value, name=name)
+        super().__init__(
+            "matrix",
+            typeOfValue=typeOfValue,
+            shapeOfValue=(rows, columns),
+            content=value,
+            name=name,
+        )
 
     def rows(self):
         return self.shapeOfValue[0]
@@ -68,15 +85,18 @@ class MatrixType(BaseType):
             return values
         return self.content[row][column]
 
+
 class RangeType(BaseType):
     def __init__(self, start, end):
-        super().__init__('range')
+        super().__init__("range")
         self.start = start
         self.end = end
 
+
 class SpreadType(BaseType):
     def __init__(self, value):
-        super().__init__('spread', shapeOfValue=(len(value),) ,content=value)
+        super().__init__("spread", shapeOfValue=(len(value),), content=value)
+
 
 # class ViewType(BaseType):
 #     def __init__(self, value, full_array):

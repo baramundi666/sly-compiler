@@ -1,8 +1,7 @@
-
 import src.AST as AST
 from src.symbol_table import TypeTable
 from src.memory import *
-from src.exceptions import  *
+from src.exceptions import *
 from src.operation_map import OperationMap
 from src.types import *
 from src.visitor import *
@@ -11,16 +10,16 @@ import sys
 
 sys.setrecursionlimit(10000)
 
+
 class Interpreter(object):
     def __init__(self):
         self.memory_stack = MemoryStack(Memory("global"))
         self.operation_map = OperationMap().operation_map
         self.type_table = TypeTable()
 
-    @on('node')
+    @on("node")
     def visit(self, node):
         pass
-
 
     @when(AST.IntNum)
     def visit(self, node):
@@ -51,8 +50,13 @@ class Interpreter(object):
         left = self.visit(node.left)
         right = self.visit(node.right)
         if left.shapeOfValue != right.shapeOfValue:
-            raise RuntimeException(f"Line {node.lineno}: incorrect shapes {left.shapeOfValue} and {right.shapeOfValue}")
-        return ScalarType(self.type_table.getType(left.typeOfValue, node.op, right.typeOfValue), self.operation_map[node.op](left.content, right.content))
+            raise RuntimeException(
+                f"Line {node.lineno}: incorrect shapes {left.shapeOfValue} and {right.shapeOfValue}"
+            )
+        return ScalarType(
+            self.type_table.getType(left.typeOfValue, node.op, right.typeOfValue),
+            self.operation_map[node.op](left.content, right.content),
+        )
 
     @when(AST.Transpose)
     def visit(self, node):
@@ -102,17 +106,24 @@ class Interpreter(object):
     @when(AST.Continue)
     def visit(self, node):
         # print("visit AST.Continue")
-        if not self.memory_stack.top_memory.has_key("_FOR_") and not self.memory_stack.top_memory.has_key("_WHILE_"):
-            raise RuntimeException(f"Line {node.lineno}: continue statement outside of loop")
+        if not self.memory_stack.top_memory.has_key(
+            "_FOR_"
+        ) and not self.memory_stack.top_memory.has_key("_WHILE_"):
+            raise RuntimeException(
+                f"Line {node.lineno}: continue statement outside of loop"
+            )
         raise ContinueException()
 
     @when(AST.Break)
     def visit(self, node):
         # print("visit AST.Break")
-        if not self.memory_stack.top_memory.has_key("_FOR_") and not self.memory_stack.top_memory.has_key("_WHILE_"):
-            raise RuntimeException(f"Line {node.lineno}: break statement outside of loop")
+        if not self.memory_stack.top_memory.has_key(
+            "_FOR_"
+        ) and not self.memory_stack.top_memory.has_key("_WHILE_"):
+            raise RuntimeException(
+                f"Line {node.lineno}: break statement outside of loop"
+            )
         raise BreakException()
-
 
     @when(AST.Return)
     def visit(self, node):
@@ -130,10 +141,14 @@ class Interpreter(object):
             variable_name = node.variable.array.name
             array = self.memory_stack.get(variable_name)
 
-            viewed = self.visit(node.variable) # ignored here, but used for printing accessed value
+            viewed = self.visit(
+                node.variable
+            )  # ignored here, but used for printing accessed value
             variable_value = self.visit(node.value)
             # array = self.visit(node.variable).full_array
-            array.content[node.variable.indexes[0].value][node.variable.indexes[0].value] = variable_value.content
+            array.content[node.variable.indexes[0].value][
+                node.variable.indexes[0].value
+            ] = variable_value.content
             self.memory_stack.set(variable_name, array)
 
     @when(AST.ArrayRange)
@@ -191,7 +206,9 @@ class Interpreter(object):
     def visit(self, node):
         # print("visit AST.ArrayAccess")
         array = self.visit(node.array)
-        viewed = array.content[self.visit(node.indexes[0]).content][self.visit(node.indexes[1]).content]
+        viewed = array.content[self.visit(node.indexes[0]).content][
+            self.visit(node.indexes[1]).content
+        ]
         if isinstance(viewed, float):
             return ScalarType("floatnum", viewed)
         return ScalarType("intnum", viewed)
@@ -229,4 +246,3 @@ class Interpreter(object):
 
         print()
         return SuccessType()
-

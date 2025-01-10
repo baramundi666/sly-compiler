@@ -1,5 +1,26 @@
-from src.AST import BinExpr, String, FloatNum, IntNum, Transpose, Zeros, Array, Block, Statement, Continue, Break, \
-    Return, Assignment, Variable, ArrayRange, ForLoop, WhileLoop, IfElse, ArrayAccess, Spread, Print
+from src.AST import (
+    BinExpr,
+    String,
+    FloatNum,
+    IntNum,
+    Transpose,
+    Zeros,
+    Array,
+    Block,
+    Statement,
+    Continue,
+    Break,
+    Return,
+    Assignment,
+    Variable,
+    ArrayRange,
+    ForLoop,
+    WhileLoop,
+    IfElse,
+    ArrayAccess,
+    Spread,
+    Print,
+)
 from src.symbol_table import SymbolTable, TypeTable
 from src.types import *
 
@@ -40,18 +61,21 @@ class TypeChecker(NodeVisitor):
 
         if left.entityType != right.entityType:
             return ErrorType(
-                f"Line {node.lineno}: cant do operations between {left.entityType} and {right.entityType}")
+                f"Line {node.lineno}: cant do operations between {left.entityType} and {right.entityType}"
+            )
 
         new_type = self.typeTable.getType(left.typeOfValue, node.op, right.typeOfValue)
         if not new_type:
             return ErrorType(
-                f"Line {node.lineno}: cant do operation {left.typeOfValue} {node.op} {right.typeOfValue}")
+                f"Line {node.lineno}: cant do operation {left.typeOfValue} {node.op} {right.typeOfValue}"
+            )
 
         if node.op in [">", "<", "==", ">=", "<=", "!="]:
             if isinstance(left, ScalarType):
                 return ScalarType(new_type, value=None)
-            return ErrorType(f"Line {node.lineno}: cannot compare {left.entityType} and {right.entityType}")
-
+            return ErrorType(
+                f"Line {node.lineno}: cannot compare {left.entityType} and {right.entityType}"
+            )
 
         if isinstance(left, ScalarType):
             return ScalarType(new_type, value=None)
@@ -63,9 +87,12 @@ class TypeChecker(NodeVisitor):
             if "*" == node.op:
                 if left.shapeOfValue[1] != right.shapeOfValue[0]:
                     return ErrorType(
-                        f"Line {node.lineno}: cannot multiply matrices of shapes {left.shapeOfValue} and {right.shapeOfValue}")
+                        f"Line {node.lineno}: cannot multiply matrices of shapes {left.shapeOfValue} and {right.shapeOfValue}"
+                    )
             elif left.shapeOfValue != right.shapeOfValue:
-                return ErrorType(f"Line {node.lineno}: cannot do operation {node.op} on shapes {left.shapeOfValue} and {right.shapeOfValue}")
+                return ErrorType(
+                    f"Line {node.lineno}: cannot do operation {node.op} on shapes {left.shapeOfValue} and {right.shapeOfValue}"
+                )
             return MatrixType(new_type, left.rows(), right.columns(), value=None)
 
     def visit_Transpose(self, node: Transpose):
@@ -76,7 +103,12 @@ class TypeChecker(NodeVisitor):
             return entity
 
         if isinstance(entity, MatrixType):
-            return MatrixType(entity.typeOfValue, columns=entity.rows(), rows=entity.columns(), value=None)
+            return MatrixType(
+                entity.typeOfValue,
+                columns=entity.rows(),
+                rows=entity.columns(),
+                value=None,
+            )
 
         return ErrorType(f"Line {node.lineno}: cant transpose {entity.entityType}")
 
@@ -87,12 +119,26 @@ class TypeChecker(NodeVisitor):
             if isinstance(size, ErrorType) or isinstance(size, UndefinedType):
                 return size
             if not isinstance(size, ScalarType):
-                return ErrorType(f"Line {node.lineno}: size has to be scalar but is {size}")
-            if size.typeOfValue != 'intnum':
-                return ErrorType(f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}")
+                return ErrorType(
+                    f"Line {node.lineno}: size has to be scalar but is {size}"
+                )
+            if size.typeOfValue != "intnum":
+                return ErrorType(
+                    f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}"
+                )
         if len(sizes) > 1:
-            return MatrixType(typeOfValue='intnum', rows=sizes[0].content, columns=sizes[1].content, value=None)
-        return MatrixType(typeOfValue='intnum', rows=sizes[0].content, columns=sizes[0].content, value=None)
+            return MatrixType(
+                typeOfValue="intnum",
+                rows=sizes[0].content,
+                columns=sizes[1].content,
+                value=None,
+            )
+        return MatrixType(
+            typeOfValue="intnum",
+            rows=sizes[0].content,
+            columns=sizes[0].content,
+            value=None,
+        )
 
     def visit_Ones(self, node: Zeros):
         sizes: list[BaseType] = [self.visit(size) for size in node.sizes]
@@ -101,12 +147,26 @@ class TypeChecker(NodeVisitor):
             if isinstance(size, ErrorType) or isinstance(size, UndefinedType):
                 return size
             if not isinstance(size, ScalarType):
-                return ErrorType(f"Line {node.lineno}: size has to be scalar but is {size}")
-            if size.typeOfValue != 'intnum':
-                return ErrorType(f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}")
+                return ErrorType(
+                    f"Line {node.lineno}: size has to be scalar but is {size}"
+                )
+            if size.typeOfValue != "intnum":
+                return ErrorType(
+                    f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}"
+                )
         if len(sizes) > 1:
-            return MatrixType(typeOfValue='intnum', rows=sizes[0].content, columns=sizes[1].content, value=None)
-        return MatrixType(typeOfValue='intnum', rows=sizes[0].content, columns=sizes[0].content, value=None)
+            return MatrixType(
+                typeOfValue="intnum",
+                rows=sizes[0].content,
+                columns=sizes[1].content,
+                value=None,
+            )
+        return MatrixType(
+            typeOfValue="intnum",
+            rows=sizes[0].content,
+            columns=sizes[0].content,
+            value=None,
+        )
 
     def visit_Eye(self, node: Zeros):
         sizes: list[BaseType] = [self.visit(size) for size in node.sizes]
@@ -115,12 +175,26 @@ class TypeChecker(NodeVisitor):
             if isinstance(size, ErrorType) or isinstance(size, UndefinedType):
                 return size
             if not isinstance(size, ScalarType):
-                return ErrorType(f"Line {node.lineno}: size has to be scalar but is {size}")
-            if size.typeOfValue != 'intnum':
-                return ErrorType(f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}")
+                return ErrorType(
+                    f"Line {node.lineno}: size has to be scalar but is {size}"
+                )
+            if size.typeOfValue != "intnum":
+                return ErrorType(
+                    f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}"
+                )
         if len(sizes) > 1:
-            return MatrixType(typeOfValue='intnum', rows=sizes[0].content, columns=sizes[1].content, value=None)
-        return MatrixType(typeOfValue='intnum', rows=sizes[0].content, columns=sizes[0].content, value=None)
+            return MatrixType(
+                typeOfValue="intnum",
+                rows=sizes[0].content,
+                columns=sizes[1].content,
+                value=None,
+            )
+        return MatrixType(
+            typeOfValue="intnum",
+            rows=sizes[0].content,
+            columns=sizes[0].content,
+            value=None,
+        )
 
     def visit_Block(self, node: Block):
         self.scopes.pushScope()
@@ -136,18 +210,20 @@ class TypeChecker(NodeVisitor):
         entity = self.visit(node.statement)
         if node.next_statements is not None:
             new_entity = self.visit(node.next_statements)
-            if isinstance(new_entity, ErrorType) or isinstance(new_entity, UndefinedType):
+            if isinstance(new_entity, ErrorType) or isinstance(
+                new_entity, UndefinedType
+            ):
                 entity = new_entity
         return entity
 
     def visit_Continue(self, _: Continue):
         if not self.scopes.isInsideLoop():
-            return ErrorType(f'Line {_.lineno}: Continue is not inside loop')
+            return ErrorType(f"Line {_.lineno}: Continue is not inside loop")
         return SuccessType()
 
     def visit_Break(self, _: Break):
         if not self.scopes.isInsideLoop():
-            return ErrorType(f'Line {_.lineno}: Break is not inside loop')
+            return ErrorType(f"Line {_.lineno}: Break is not inside loop")
         return SuccessType()
 
     def visit_Return(self, node: Return):
@@ -165,17 +241,21 @@ class TypeChecker(NodeVisitor):
         if isinstance(right, ErrorType) or isinstance(right, UndefinedType):
             return right
 
-        if node.op == '=':
+        if node.op == "=":
             self.scopes.put(node.variable.name, right)
         else:
             if isinstance(left, UndefinedType) or left.entityType != right.entityType:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot do operation {left.entityType} {node.op} {right.entityType}")
-            new_type = self.typeTable.getType(left.entityType, node.op, right.entityType)
+                    f"Line {node.lineno}: cannot do operation {left.entityType} {node.op} {right.entityType}"
+                )
+            new_type = self.typeTable.getType(
+                left.entityType, node.op, right.entityType
+            )
 
             if not new_type:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot do operation {left.entityType} {node.op} {right.entityType}")
+                    f"Line {node.lineno}: cannot do operation {left.entityType} {node.op} {right.entityType}"
+                )
 
             self.scopes.put(node.variable.name, right)
         return SuccessType()
@@ -200,15 +280,21 @@ class TypeChecker(NodeVisitor):
 
         if isinstance(start, IntNum) and isinstance(end, IntNum):
             if start.value > end.value:
-                return ErrorType(f"Line {node.lineno}: start value {start.value} > end value {end.value}")
+                return ErrorType(
+                    f"Line {node.lineno}: start value {start.value} > end value {end.value}"
+                )
 
         return RangeType(start=start, end=end)
 
     def visit_ForLoop(self, node: ForLoop):
         range_entity = self.visit(node.range)
-        if isinstance(range_entity, ErrorType) or isinstance(range_entity, UndefinedType):
+        if isinstance(range_entity, ErrorType) or isinstance(
+            range_entity, UndefinedType
+        ):
             return range_entity
-        self.scopes.put(node.variable.name, ScalarType('intnum', value=range_entity.start))
+        self.scopes.put(
+            node.variable.name, ScalarType("intnum", value=range_entity.start)
+        )
 
         self.scopes.enterLoop()
 
@@ -223,7 +309,7 @@ class TypeChecker(NodeVisitor):
 
     def visit_WhileLoop(self, node: WhileLoop):
         condition = self.visit(node.condition)
-        if condition.typeOfValue != 'boolean':
+        if condition.typeOfValue != "boolean":
             return ErrorType(f"Line {node.lineno}: condition has to be boolean")
 
         self.scopes.enterLoop()
@@ -238,7 +324,7 @@ class TypeChecker(NodeVisitor):
 
     def visit_IfElse(self, node: IfElse):
         condition = self.visit(node.condition)
-        if condition.typeOfValue != 'boolean':
+        if condition.typeOfValue != "boolean":
             return ErrorType(f"Line {node.lineno}: condition has to be boolean")
 
         if_block = self.visit(node.if_block)
@@ -246,31 +332,47 @@ class TypeChecker(NodeVisitor):
             return if_block
         if node.else_block is not None:
             else_block = self.visit(node.else_block)
-            if isinstance(else_block, ErrorType) or isinstance(else_block, UndefinedType):
+            if isinstance(else_block, ErrorType) or isinstance(
+                else_block, UndefinedType
+            ):
                 return else_block
         return SuccessType()
 
     def visit_ArrayAccess(self, node: ArrayAccess):
         array = self.visit(node.array)
-        if array.entityType != 'matrix' and array.entityType != 'vector':
+        if array.entityType != "matrix" and array.entityType != "vector":
             return ErrorType(f"Line {node.lineno}: cannot access {array.typeOfValue}")
 
         indexes = [self.visit(index) for index in node.indexes]
 
         if len(indexes) > 2:
-            return ErrorType(f"Line {node.lineno}: cannot access {len(indexes)} indices")
+            return ErrorType(
+                f"Line {node.lineno}: cannot access {len(indexes)} indices"
+            )
 
-        if len(indexes) != 1 and array.entityType == 'vector':
+        if len(indexes) != 1 and array.entityType == "vector":
             return ErrorType(f"Line {node.lineno}: cannot access {array.typeOfValue}")
 
-        if array.entityType == 'matrix':
-            if array.shapeOfValue[0] > indexes[0].content >= 0 and array.shapeOfValue[1] > indexes[1].content >= 0:
-                return ScalarType(typeOfValue=array.typeOfValue, value=array.valueAt(indexes[0], indexes[1]))
-            return ErrorType(f"Line {node.lineno}: indexes {indexes[0].content}, {indexes[1].content} out of range")
-        if array.entityType == 'vector':
+        if array.entityType == "matrix":
+            if (
+                array.shapeOfValue[0] > indexes[0].content >= 0
+                and array.shapeOfValue[1] > indexes[1].content >= 0
+            ):
+                return ScalarType(
+                    typeOfValue=array.typeOfValue,
+                    value=array.valueAt(indexes[0], indexes[1]),
+                )
+            return ErrorType(
+                f"Line {node.lineno}: indexes {indexes[0].content}, {indexes[1].content} out of range"
+            )
+        if array.entityType == "vector":
             if array.shapeOfValue[0] > indexes[0].content >= 0:
-                return ScalarType(typeOfValue=array.typeOfValue, value=array.valueAt(indexes[0]))
-            return ErrorType(f"Line {node.lineno}: index {indexes[0].content} out of range")
+                return ScalarType(
+                    typeOfValue=array.typeOfValue, value=array.valueAt(indexes[0])
+                )
+            return ErrorType(
+                f"Line {node.lineno}: index {indexes[0].content} out of range"
+            )
 
     def visit_Array(self, node: Array):
         val = self.visit(node.elements)
@@ -279,7 +381,7 @@ class TypeChecker(NodeVisitor):
             return val
 
         for i in range(1, len(val.content)):
-            prev = val.content[i-1]
+            prev = val.content[i - 1]
             curr = val.content[i]
             if prev.typeOfValue != curr.typeOfValue:
                 return ErrorType(
@@ -291,24 +393,26 @@ class TypeChecker(NodeVisitor):
             if isinstance(other, ErrorType) or isinstance(other, UndefinedType):
                 return other
 
-            for i in range(1,len(other.content)):
-                prev = other.content[i-1]
+            for i in range(1, len(other.content)):
+                prev = other.content[i - 1]
                 curr = other.content[i]
                 if len(prev.content) != len(curr.content):
-                    return ErrorType(
-                        f"Line {node.lineno}: incorrect matrix shape"
-                    )
+                    return ErrorType(f"Line {node.lineno}: incorrect matrix shape")
                 if prev.typeOfValue != curr.typeOfValue:
-                    return ErrorType(
-                        f"Line {node.lineno}: inconsistent matrix types"
-                    )
+                    return ErrorType(f"Line {node.lineno}: inconsistent matrix types")
             typeOfContent = other.content[0].content[0].typeOfValue
-            return MatrixType(typeOfValue=typeOfContent, rows=1+other.rows(), columns=other.columns(), value=[val] + other.content)
+            return MatrixType(
+                typeOfValue=typeOfContent,
+                rows=1 + other.rows(),
+                columns=other.columns(),
+                value=[val] + other.content,
+            )
 
         if typeOfContent is None:
             typeOfContent = val.content[0].content[0].typeOfValue
-        return MatrixType(typeOfValue=typeOfContent, rows=1, columns=len(val.content), value=[val])
-
+        return MatrixType(
+            typeOfValue=typeOfContent, rows=1, columns=len(val.content), value=[val]
+        )
 
     def visit_Spread(self, node: Spread):
         element = self.visit(node.element)

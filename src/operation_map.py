@@ -3,25 +3,27 @@ from dataclasses import dataclass, field
 
 @dataclass
 class OperationMap:
-    operation_map: dict = field(default_factory=lambda:
-    {
-        "+": lambda x, y: x + y,
-        "-": lambda x, y: x - y,
-        "neg": lambda x: -x,
-        "*": lambda x, y: x * y,
-        "/": lambda x, y: x / y,
-        ".+": matrix_add,
-        ".-": matrix_sub,
-        ".*": matrix_mul, # element wise matrix multiplication
-        "./": matrix_div, # element wise matrix division
-        "'": matrix_transpose,
-        "<": lambda x, y: x < y,
-        ">": lambda x, y: x > y,
-        "<=": lambda x, y: x <= y,
-        ">=": lambda x, y: x >= y,
-        "==": lambda x, y: x == y,
-        "!=": lambda x, y: x != y,
-    })
+    operation_map: dict = field(
+        default_factory=lambda: {
+            "+": lambda x, y: x + y,
+            "-": lambda x, y: x - y,
+            "neg": lambda x: -x,
+            "*": lambda x, y: x * y,
+            "/": lambda x, y: x / y,
+            ".+": matrix_add,
+            ".-": matrix_sub,
+            ".*": matrix_mul,  # element wise matrix multiplication
+            "./": matrix_div,  # element wise matrix division
+            "'": matrix_transpose,
+            "<": lambda x, y: x < y,
+            ">": lambda x, y: x > y,
+            "<=": lambda x, y: x <= y,
+            ">=": lambda x, y: x >= y,
+            "==": lambda x, y: x == y,
+            "!=": lambda x, y: x != y,
+        }
+    )
+
 
 def matrix_add(matrix1, matrix2):
     n, m = len(matrix1), len(matrix1[0])
@@ -31,6 +33,7 @@ def matrix_add(matrix1, matrix2):
             result_matrix[i][j] = matrix1[i][j] + matrix2[i][j]
     return result_matrix
 
+
 def matrix_sub(matrix1, matrix2):
     n, m = len(matrix1), len(matrix1[0])
     result_matrix = [[0 for _ in range(m)] for _ in range(n)]
@@ -38,6 +41,7 @@ def matrix_sub(matrix1, matrix2):
         for j in range(m):
             result_matrix[i][j] = matrix1[i][j] - matrix2[i][j]
     return result_matrix
+
 
 def matrix_mul(matrix1, matrix2):
     n, m = len(matrix1), len(matrix1[0])
@@ -47,6 +51,7 @@ def matrix_mul(matrix1, matrix2):
             result_matrix[i][j] = matrix1[i][j] * matrix2[i][j]
     return result_matrix
 
+
 def matrix_div(matrix1, matrix2):
     n, m = len(matrix1), len(matrix1[0])
     result_matrix = [[0 for _ in range(m)] for _ in range(n)]
@@ -54,6 +59,7 @@ def matrix_div(matrix1, matrix2):
         for j in range(m):
             result_matrix[i][j] = matrix1[i][j] / matrix2[i][j]
     return result_matrix
+
 
 def matrix_transpose(matrix):
     n, m = len(matrix), len(matrix[0])

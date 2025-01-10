@@ -1,5 +1,6 @@
 import src.AST as AST
 
+
 def addToClass(cls):
     def decorator(func):
         setattr(cls, func.__name__, func)
@@ -65,17 +66,15 @@ class TreePrinter:
     @addToClass(AST.Array)
     def printTree(self, indent=0):
         print_indent(indent, "VECTOR")
-        self.elements.printTree(indent+1)
+        self.elements.printTree(indent + 1)
         if self.other is not None:
             self.other.printTree(indent)
-
 
     @addToClass(AST.Spread)
     def printTree(self, indent=0):
         self.element.printTree(indent)
         if self.next is not None:
             self.next.printTree(indent)
-
 
     @addToClass(AST.ArrayAccess)
     def printTree(self, indent=0):
@@ -112,7 +111,6 @@ class TreePrinter:
         print_indent(indent, self.op)
         self.variable.printTree(indent + 1)
         self.value.printTree(indent + 1)
-
 
     @addToClass(AST.Return)
     def printTree(self, indent=0):
