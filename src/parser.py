@@ -10,6 +10,7 @@ class Parser(SLYParser):
     debugfile = get_absolute_path("data/parser/debug/parser.out")
 
     precedence = (
+        ("right", ",", "]"),
         ("nonassoc", "IFX"),
         ("nonassoc", "ELSE"),
         ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ"),
