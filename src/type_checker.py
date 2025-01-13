@@ -242,7 +242,13 @@ class TypeChecker(NodeVisitor):
             return right
 
         if node.op == "=":
-            self.scopes.put(node.variable.name, right)
+            if not isinstance(node.variable, ArrayAccess):
+                self.scopes.put(node.variable.name, right)
+            elif left.typeOfValue != right.typeOfValue:
+                return ErrorType(
+                    f"Line {node.lineno}: cannot assign {right.typeOfValue} into {left.typeOfValue} matrix"
+                )
+
         else:
             if isinstance(left, UndefinedType) or left.entityType != right.entityType:
                 return ErrorType(

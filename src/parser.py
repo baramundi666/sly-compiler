@@ -10,13 +10,14 @@ class Parser(SLYParser):
     debugfile = get_absolute_path("data/parser/debug/parser.out")
 
     precedence = (
-        ("right", ",", "]"),
+        ("nonassoc", "ID"),
+        ("nonassoc", "["),
         ("nonassoc", "IFX"),
         ("nonassoc", "ELSE"),
         ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ", ":"),
         ("left", "+", "DOTPLUS", "-", "DOTMINUS"),
         ("left", "*", "DOTTIMES", "/", "DOTDIVIDE"),
-        ("right", "UMINUS", "'"),
+        ("right", "UMINUS", "'")
     )
 
     @_("block start", "block")
@@ -25,9 +26,13 @@ class Parser(SLYParser):
             return AST.Block(p.block, p.start, lineno=p.lineno)
         return AST.Block(p.block, lineno=p.lineno)
 
-    @_("ID")
+    # @_("ID")
+    # def expression(self, p):
+    #     return AST.Variable(p.ID, lineno=p.lineno)
+
+    @_("assignable")
     def expression(self, p):
-        return AST.Variable(p.ID, lineno=p.lineno)
+        return p.assignable
 
     @_("STRING")
     def expression(self, p):
@@ -95,19 +100,14 @@ class Parser(SLYParser):
 
     @_("'[' list ']'")
     def expression(self, p):
-        return AST.Array(p.list, lineno=p.lineno)
-
-    # bez tego nie ma konfliktow
-
+        return AST.Array(p.list, lineno=p.lineno) 
+    
     # @_("ID '[' indexes ']'")
     # def expression(self, p):
     #     return AST.ArrayAccess(
     #         AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
-    #     )
-    
-    # @_('assignable')
-    # def expression(self, p):
-    #     return p.assignable
+    #     ) AST.Array(p.list, lineno=p.lineno)
+
 
     @_("list_element ',' spread_elements", "list_element")
     def spread_elements(self, p):
@@ -160,26 +160,17 @@ class Parser(SLYParser):
         return AST.ForLoop(
             AST.Variable(p.ID), p.range, AST.Block(p.block), lineno=p.lineno
         )
-        
-    # bruh
+
     @_(
         "assignable '=' expression ';'",
         "assignable ADDASSIGN expression ';'",
         "assignable SUBASSIGN expression ';'",
         "assignable MULASSIGN expression ';'",
         "assignable DIVASSIGN expression ';'",
-        "assignable '=' ID '[' indexes ']' ';'",
-        "assignable ADDASSIGN ID '[' indexes ']' ';'",
-        "assignable SUBASSIGN ID '[' indexes ']' ';'",
-        "assignable MULASSIGN ID '[' indexes ']' ';'",
-        "assignable DIVASSIGN ID '[' indexes ']' ';'",
     )
     def statement(self, p):
-        if len(p) == 4:
-            return AST.Assignment(p.assignable, p[1], p.expression, lineno=p.lineno)
-        return AST.Assignment(p.assignable, p[1], AST.ArrayAccess(
-                AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
-            ), lineno=p.lineno)
+        return AST.Assignment(p.assignable, p[1], p.expression, lineno=p.lineno)
+        
 
     @_("RETURN expression ';'")
     def statement(self, p):
@@ -234,14 +225,15 @@ class Parser(SLYParser):
         # )
         return AST.ArrayRange(p.expression0, p.expression1, lineno=p.lineno)
 
-    @_("ID", "ID '[' indexes ']'")
+    @_("ID")
     def assignable(self, p):
-        if len(p) == 1:
-            return AST.Variable(p.ID, lineno=p.lineno)
-        else:
-            return AST.ArrayAccess(
-                AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
-            )
+        return AST.Variable(p.ID, lineno=p.lineno)
+            
+    @_("ID '[' indexes ']'")
+    def assignable(self, p):
+        return AST.ArrayAccess(
+            AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
+        )
 
     @_("INTNUM ',' indexes", "INTNUM")
     def indexes(self, p):

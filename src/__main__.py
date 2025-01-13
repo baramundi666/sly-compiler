@@ -9,7 +9,7 @@ from src.tree_printer import TreePrinter
 
 
 def main():
-    default = ("interpreter", "primes.m")
+    default = ("interpreter", "matrix.m")
     lab = sys.argv[1] if len(sys.argv) == 3 else default[0]
     file_name = sys.argv[2] if len(sys.argv) == 3 else default[1]
     path = get_absolute_path(f"data/{lab}/{file_name}")
