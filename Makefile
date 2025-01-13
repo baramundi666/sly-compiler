@@ -7,6 +7,7 @@ lint:
 	ruff format .
 	ruff check --fix .
 
+
 test-all: test-scanner test-parser test-ast test-tc test-interpreter
 
 test-scanner:
@@ -64,3 +65,7 @@ test-interpreter:
 		@echo "Running Interpreter test: triangle.m"
 	@python3 -m src interpreter triangle.m
 	@echo "Interpreter tests completed"
+
+run-main: 
+	@echo "Running __main__.py file"
+	@python3 -m src __main__.py

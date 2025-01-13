@@ -248,13 +248,14 @@ class TypeChecker(NodeVisitor):
                 return ErrorType(
                     f"Line {node.lineno}: cannot do operation {left.entityType} {node.op} {right.entityType}"
                 )
+            
             new_type = self.typeTable.getType(
-                left.entityType, node.op, right.entityType
+                left.typeOfValue, node.op[0], right.typeOfValue
             )
 
             if not new_type:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot do operation {left.entityType} {node.op} {right.entityType}"
+                    f"Line {node.lineno}: cannot do operation {left.typeOfValue} {node.op} {right.typeOfValue}"
                 )
 
             self.scopes.put(node.variable.name, right)

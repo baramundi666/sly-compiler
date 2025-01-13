@@ -13,9 +13,9 @@ class Parser(SLYParser):
         ("right", ",", "]"),
         ("nonassoc", "IFX"),
         ("nonassoc", "ELSE"),
-        ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ"),
-        ("left", "+", "-", "DOTPLUS", "DOTMINUS"),
-        ("left", "*", "/", "DOTTIMES", "DOTDIVIDE"),
+        ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ", ":"),
+        ("left", "+", "DOTPLUS", "-", "DOTMINUS"),
+        ("left", "*", "DOTTIMES", "/", "DOTDIVIDE"),
         ("right", "UMINUS", "'"),
     )
 
@@ -73,7 +73,7 @@ class Parser(SLYParser):
     def expression(self, p):
         return AST.BinExpr(p[1], p.expression0, p.expression1, lineno=p.lineno)
 
-    @_("expression '''")
+    @_("expression '\''")
     def expression(self, p):
         return AST.Transpose(p.expression, lineno=p.lineno)
 
@@ -97,11 +97,17 @@ class Parser(SLYParser):
     def expression(self, p):
         return AST.Array(p.list, lineno=p.lineno)
 
-    @_("ID '[' indexes ']'")
-    def expression(self, p):
-        return AST.ArrayAccess(
-            AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
-        )
+    # bez tego nie ma konfliktow
+
+    # @_("ID '[' indexes ']'")
+    # def expression(self, p):
+    #     return AST.ArrayAccess(
+    #         AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
+    #     )
+    
+    # @_('assignable')
+    # def expression(self, p):
+    #     return p.assignable
 
     @_("list_element ',' spread_elements", "list_element")
     def spread_elements(self, p):
@@ -154,16 +160,26 @@ class Parser(SLYParser):
         return AST.ForLoop(
             AST.Variable(p.ID), p.range, AST.Block(p.block), lineno=p.lineno
         )
-
+        
+    # bruh
     @_(
         "assignable '=' expression ';'",
         "assignable ADDASSIGN expression ';'",
         "assignable SUBASSIGN expression ';'",
         "assignable MULASSIGN expression ';'",
         "assignable DIVASSIGN expression ';'",
+        "assignable '=' ID '[' indexes ']' ';'",
+        "assignable ADDASSIGN ID '[' indexes ']' ';'",
+        "assignable SUBASSIGN ID '[' indexes ']' ';'",
+        "assignable MULASSIGN ID '[' indexes ']' ';'",
+        "assignable DIVASSIGN ID '[' indexes ']' ';'",
     )
     def statement(self, p):
-        return AST.Assignment(p.assignable, p[1], p.expression, lineno=p.lineno)
+        if len(p) == 4:
+            return AST.Assignment(p.assignable, p[1], p.expression, lineno=p.lineno)
+        return AST.Assignment(p.assignable, p[1], AST.ArrayAccess(
+                AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
+            ), lineno=p.lineno)
 
     @_("RETURN expression ';'")
     def statement(self, p):
@@ -204,19 +220,19 @@ class Parser(SLYParser):
         else:
             return AST.Spread(p.expression, lineno=p.lineno)
 
-    @_("INTNUM ':' INTNUM", "ID ':' ID", "ID ':' INTNUM", "INTNUM ':' ID")
+    @_("expression ':' expression")
     def range(self, p):
-        tmp1 = (
-            AST.IntNum(int(p[0]), lineno=p.lineno)
-            if p[0].isnumeric()
-            else AST.Variable(p[0], lineno=p.lineno)
-        )
-        tmp2 = (
-            AST.IntNum(int(p[2]), lineno=p.lineno)
-            if p[2].isnumeric()
-            else AST.Variable(p[2], lineno=p.lineno)
-        )
-        return AST.ArrayRange(tmp1, tmp2, lineno=p.lineno)
+        # tmp1 = (
+        #     AST.IntNum(int(p[0]), lineno=p.lineno)
+        #     if p[0].isnumeric()
+        #     else AST.Variable(p[0], lineno=p.lineno)
+        # )
+        # tmp2 = (
+        #     AST.IntNum(int(p[2]), lineno=p.lineno)
+        #     if p[2].isnumeric()
+        #     else AST.Variable(p[2], lineno=p.lineno)
+        # )
+        return AST.ArrayRange(p.expression0, p.expression1, lineno=p.lineno)
 
     @_("ID", "ID '[' indexes ']'")
     def assignable(self, p):
