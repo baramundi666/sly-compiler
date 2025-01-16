@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 
+from src.type_checker import ScalarType, MatrixType
+
 
 @dataclass
 class OperationMap:
@@ -26,45 +28,30 @@ class OperationMap:
 
 
 def matrix_add(matrix1, matrix2):
-    n, m = len(matrix1), len(matrix1[0])
-    result_matrix = [[0 for _ in range(m)] for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            result_matrix[i][j] = matrix1[i][j] + matrix2[i][j]
-    return result_matrix
+    n, m = len(matrix1.content), len(matrix1.content[0])
+    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content + matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_sub(matrix1, matrix2):
-    n, m = len(matrix1), len(matrix1[0])
-    result_matrix = [[0 for _ in range(m)] for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            result_matrix[i][j] = matrix1[i][j] - matrix2[i][j]
-    return result_matrix
+    n, m = len(matrix1.content), len(matrix1.content[0])
+    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content - matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_mul(matrix1, matrix2):
-    n, m = len(matrix1), len(matrix1[0])
-    result_matrix = [[0 for _ in range(m)] for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            result_matrix[i][j] = matrix1[i][j] * matrix2[i][j]
-    return result_matrix
+    n, m = len(matrix1.content), len(matrix1.content[0])
+    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content * matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_div(matrix1, matrix2):
-    n, m = len(matrix1), len(matrix1[0])
-    result_matrix = [[0 for _ in range(m)] for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            result_matrix[i][j] = matrix1[i][j] / matrix2[i][j]
-    return result_matrix
+    n, m = len(matrix1.content), len(matrix1.content[0])
+    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content / matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_transpose(matrix):
-    n, m = len(matrix), len(matrix[0])
-    transposed_matrix = [[0 for _ in range(n)] for _ in range(m)]
-    for i in range(n):
-        for j in range(m):
-            transposed_matrix[j][i] = matrix[i][j]
-    return transposed_matrix
+    n, m = len(matrix.content), len(matrix.content[0])
+    transposed_matrix = [[ScalarType(matrix.typeOfValue, matrix.content[j][i].content) for j in range(n)] for i in range(m)]
+    return MatrixType(matrix.typeOfValue, m, n, transposed_matrix)
