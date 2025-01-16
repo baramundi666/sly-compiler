@@ -130,7 +130,6 @@ class SpreadType(BaseType):
 #         self.full_array = full_array
 
 
-
 class NodeVisitor(object):
     def visit(self, node):
         return node.visit(self)
@@ -167,20 +166,24 @@ class TypeChecker(NodeVisitor):
 
         if left.entityType != right.entityType:
             return ErrorType(
-                f"Line {node.lineno}: cant do operations between {left.entityType} and {right.entityType}"
+                f"Line {node.lineno}: cant do operations between {
+                    left.entityType} and {right.entityType}"
             )
 
-        new_type = self.typeTable.getType(left.typeOfValue, node.op, right.typeOfValue)
+        new_type = self.typeTable.getType(
+            left.typeOfValue, node.op, right.typeOfValue)
         if not new_type:
             return ErrorType(
-                f"Line {node.lineno}: cant do operation {left.typeOfValue} {node.op} {right.typeOfValue}"
+                f"Line {node.lineno}: cant do operation {
+                    left.typeOfValue} {node.op} {right.typeOfValue}"
             )
 
         if node.op in [">", "<", "==", ">=", "<=", "!="]:
             if isinstance(left, ScalarType):
                 return ScalarType(new_type, value=None)
             return ErrorType(
-                f"Line {node.lineno}: cannot compare {left.entityType} and {right.entityType}"
+                f"Line {node.lineno}: cannot compare {
+                    left.entityType} and {right.entityType}"
             )
 
         if isinstance(left, ScalarType):
@@ -193,11 +196,13 @@ class TypeChecker(NodeVisitor):
             if "*" == node.op:
                 if left.shapeOfValue[1] != right.shapeOfValue[0]:
                     return ErrorType(
-                        f"Line {node.lineno}: cannot multiply matrices of shapes {left.shapeOfValue} and {right.shapeOfValue}"
+                        f"Line {node.lineno}: cannot multiply matrices of shapes {
+                            left.shapeOfValue} and {right.shapeOfValue}"
                     )
             elif left.shapeOfValue != right.shapeOfValue:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot do operation {node.op} on shapes {left.shapeOfValue} and {right.shapeOfValue}"
+                    f"Line {node.lineno}: cannot do operation {node.op} on shapes {
+                        left.shapeOfValue} and {right.shapeOfValue}"
                 )
             return MatrixType(new_type, left.rows(), right.columns(), value=None)
 
@@ -230,7 +235,8 @@ class TypeChecker(NodeVisitor):
                 )
             if size.typeOfValue != "intnum":
                 return ErrorType(
-                    f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}"
+                    f"Line {node.lineno}: size has to be an intnum but is {
+                        size.typeOfValue}"
                 )
         if len(sizes) > 1:
             return MatrixType(
@@ -258,7 +264,8 @@ class TypeChecker(NodeVisitor):
                 )
             if size.typeOfValue != "intnum":
                 return ErrorType(
-                    f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}"
+                    f"Line {node.lineno}: size has to be an intnum but is {
+                        size.typeOfValue}"
                 )
         if len(sizes) > 1:
             return MatrixType(
@@ -286,7 +293,8 @@ class TypeChecker(NodeVisitor):
                 )
             if size.typeOfValue != "intnum":
                 return ErrorType(
-                    f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}"
+                    f"Line {node.lineno}: size has to be an intnum but is {
+                        size.typeOfValue}"
                 )
         if len(sizes) > 1:
             return MatrixType(
@@ -352,22 +360,25 @@ class TypeChecker(NodeVisitor):
                 self.scopes.put(node.variable.name, right)
             elif left.typeOfValue != right.typeOfValue:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot assign {right.typeOfValue} into {left.typeOfValue} matrix"
+                    f"Line {node.lineno}: cannot assign {
+                        right.typeOfValue} into {left.typeOfValue} matrix"
                 )
 
         else:
             if isinstance(left, UndefinedType) or left.entityType != right.entityType:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot do operation {left.entityType} {node.op} {right.entityType}"
+                    f"Line {node.lineno}: cannot do operation {
+                        left.entityType} {node.op} {right.entityType}"
                 )
-            
+
             new_type = self.typeTable.getType(
                 left.typeOfValue, node.op[0], right.typeOfValue
             )
 
             if not new_type:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot do operation {left.typeOfValue} {node.op} {right.typeOfValue}"
+                    f"Line {node.lineno}: cannot do operation {
+                        left.typeOfValue} {node.op} {right.typeOfValue}"
                 )
 
             self.scopes.put(node.variable.name, right)
@@ -394,7 +405,8 @@ class TypeChecker(NodeVisitor):
         if isinstance(start, IntNum) and isinstance(end, IntNum):
             if start.value > end.value:
                 return ErrorType(
-                    f"Line {node.lineno}: start value {start.value} > end value {end.value}"
+                    f"Line {node.lineno}: start value {
+                        start.value} > end value {end.value}"
                 )
 
         return RangeType(start=start, end=end)
@@ -471,17 +483,21 @@ class TypeChecker(NodeVisitor):
                 array.shapeOfValue[0] > indexes[0].content >= 0
                 and array.shapeOfValue[1] > indexes[1].content >= 0
             ):
+
                 return ScalarType(
                     typeOfValue=array.typeOfValue,
                     value=array.valueAt(indexes[0], indexes[1]),
                 )
+            print(array.shapeOfValue, indexes[0].content, indexes[1].content)
             return ErrorType(
-                f"Line {node.lineno}: indexes {indexes[0].content}, {indexes[1].content} out of range"
+                f"Line {node.lineno}: indexes {indexes[0].content}, {
+                    indexes[1].content} out of range"
             )
         if array.entityType == "vector":
             if array.shapeOfValue[0] > indexes[0].content >= 0:
                 return ScalarType(
-                    typeOfValue=array.typeOfValue, value=array.valueAt(indexes[0])
+                    typeOfValue=array.typeOfValue, value=array.valueAt(
+                        indexes[0])
                 )
             return ErrorType(
                 f"Line {node.lineno}: index {indexes[0].content} out of range"
@@ -498,7 +514,8 @@ class TypeChecker(NodeVisitor):
             curr = val.content[i]
             if prev.typeOfValue != curr.typeOfValue:
                 return ErrorType(
-                    f"Line {node.lineno}: cannot create array with different value types"
+                    f"Line {
+                        node.lineno}: cannot create array with different value types"
                 )
         typeOfContent = val.content[0].typeOfValue
         if node.other is not None:
@@ -523,6 +540,9 @@ class TypeChecker(NodeVisitor):
 
         if typeOfContent is None:
             typeOfContent = val.content[0].content[0].typeOfValue
+
+        if len(val.content) == 1 and isinstance(val.content[0], SpreadType):
+            return MatrixType(typeOfValue=typeOfContent, rows=1, columns=len(val.content[0].content), value=[val.content[0]])
         return MatrixType(
             typeOfValue=typeOfContent, rows=1, columns=len(val.content), value=[val]
         )
