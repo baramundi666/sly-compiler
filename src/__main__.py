@@ -1,14 +1,15 @@
 import sys
 
-from src.TypeChecker import TypeChecker
+from src.interpreter import Interpreter
+from src.type_checker import TypeChecker, SuccessType
 from src.parser import Parser
 from src.scanner import Scanner
 from src.utils import get_absolute_path
-from tree_printer import TreePrinter
+from src.tree_printer import TreePrinter
 
 
 def main():
-    default = ("tc", "opers.m")
+    default = ("interpreter", "triangle.m")
     lab = sys.argv[1] if len(sys.argv) == 3 else default[0]
     file_name = sys.argv[2] if len(sys.argv) == 3 else default[1]
     path = get_absolute_path(f"data/{lab}/{file_name}")
@@ -27,12 +28,38 @@ def main():
             test_ast(text)
         case "tc":
             test_type_checker(text)
+        case "interpreter":
+            test_interpreter(text)
+        case _:
+            print(f"Invalid lab argument: {lab}")
+
+
+def test_interpreter(text):
+    lexer = Scanner()
+    parser = Parser()
+    ast = parser.parse(lexer.tokenize(text))
+    tc = TypeChecker()
+    tc_result = tc.visit(ast)
+    if not isinstance(tc_result, SuccessType):
+        raise RuntimeError("Type checker error")
+    interpreter = Interpreter()
+    interpreter.visit(ast)
+
+
+def test_type_checker(text):
+    lexer = Scanner()
+    parser = Parser()
+    ast = parser.parse(lexer.tokenize(text))
+    tc = TypeChecker()
+    tc_result = tc.visit(ast)
+    print(tc_result)
 
 
 def test_ast(text):
     lexer = Scanner()
     parser = Parser()
     ast = parser.parse(lexer.tokenize(text))
+    TreePrinter()
     ast.printTree()
 
 
@@ -46,14 +73,6 @@ def test_scanner(text):
     lexer = Scanner()
     for tok in lexer.tokenize(text):
         print(tok)
-
-def test_type_checker(text):
-    lexer = Scanner()
-    parser = Parser()
-    ast = parser.parse(lexer.tokenize(text))
-    tc = TypeChecker()
-    tc.visit(ast)
-
 
 
 if __name__ == "__main__":
