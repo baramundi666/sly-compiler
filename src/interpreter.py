@@ -75,7 +75,13 @@ class Interpreter(object):
     def visit(self, node):
         n, m = node.sizes if len(node.sizes) == 2 else (node.sizes[0], node.sizes[0])
         n, m = self.visit(n).content, self.visit(m).content
-        eye_matrix = [[ScalarType("intnum", 1) if i == j else ScalarType("intnum", 0) for j in range(m)] for i in range(n)]
+        eye_matrix = [
+            [
+                ScalarType("intnum", 1) if i == j else ScalarType("intnum", 0)
+                for j in range(m)
+            ]
+            for i in range(n)
+        ]
         return MatrixType("intnum", n, m, eye_matrix)
 
     @when(AST.Block)
@@ -109,10 +115,14 @@ class Interpreter(object):
         action = node.op.replace("=", "")
         left = self.visit(node.variable)
         right = self.visit(node.value)
-        variable_value = ScalarType(
-            self.type_table.getType(left.typeOfValue, node.op, right.typeOfValue),
-            self.operation_map[action](left.content, right.content),
-        ) if action else right
+        variable_value = (
+            ScalarType(
+                self.type_table.getType(left.typeOfValue, node.op, right.typeOfValue),
+                self.operation_map[action](left.content, right.content),
+            )
+            if action
+            else right
+        )
 
         if isinstance(node.variable, AST.Variable):
             variable_name = node.variable.name
@@ -186,8 +196,9 @@ class Interpreter(object):
         elements = self.visit(node.elements)
         if isinstance(elements.content[0], list):
             return elements
+        # HACK! (assuming matrix input is ALWAYS float)
         val = [ScalarType("floatnum", float(el.content)) for el in elements.content]
-
+        # val = [el for el in elements.content]
 
         typeOfContent = val[0].typeOfValue
         if node.other is not None:

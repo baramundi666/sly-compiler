@@ -1,7 +1,7 @@
 import sys
 
 from src.interpreter import Interpreter
-from src.type_checker import TypeChecker, ErrorType
+from src.type_checker import TypeChecker, SuccessType
 from src.parser import Parser
 from src.scanner import Scanner
 from src.utils import get_absolute_path
@@ -40,7 +40,7 @@ def test_interpreter(text):
     ast = parser.parse(lexer.tokenize(text))
     tc = TypeChecker()
     tc_result = tc.visit(ast)
-    if isinstance(tc_result, ErrorType):
+    if not isinstance(tc_result, SuccessType):
         raise RuntimeError("Type checker error")
     interpreter = Interpreter()
     interpreter.visit(ast)

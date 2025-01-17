@@ -7,7 +7,7 @@ class Node(object):
         try:
             func = getattr(visitor, f"visit_{self.__class__.__name__}")
             return func(self)
-        except AttributeError as e:
+        except AttributeError:
             print(
                 f"Visitor {visitor.__class__.__name__} does not have visit_{self.__class__.__name__} implemented"
             )

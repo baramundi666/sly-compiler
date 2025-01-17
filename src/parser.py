@@ -17,7 +17,7 @@ class Parser(SLYParser):
         ("nonassoc", "LE", "GE", "LT", "GT", "EQ", "NEQ", ":"),
         ("left", "+", "DOTPLUS", "-", "DOTMINUS"),
         ("left", "*", "DOTTIMES", "/", "DOTDIVIDE"),
-        ("right", "UMINUS", "'")
+        ("right", "UMINUS", "'"),
     )
 
     @_("block start", "block")
@@ -78,7 +78,7 @@ class Parser(SLYParser):
     def expression(self, p):
         return AST.BinExpr(p[1], p.expression0, p.expression1, lineno=p.lineno)
 
-    @_("expression '\''")
+    @_("expression '''")
     def expression(self, p):
         return AST.Transpose(p.expression, lineno=p.lineno)
 
@@ -100,14 +100,13 @@ class Parser(SLYParser):
 
     @_("'[' list ']'")
     def expression(self, p):
-        return AST.Array(p.list, lineno=p.lineno) 
-    
+        return AST.Array(p.list, lineno=p.lineno)
+
     # @_("ID '[' indexes ']'")
     # def expression(self, p):
     #     return AST.ArrayAccess(
     #         AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
     #     ) AST.Array(p.list, lineno=p.lineno)
-
 
     @_("list_element ',' spread_elements", "list_element")
     def spread_elements(self, p):
@@ -170,7 +169,6 @@ class Parser(SLYParser):
     )
     def statement(self, p):
         return AST.Assignment(p.assignable, p[1], p.expression, lineno=p.lineno)
-        
 
     @_("RETURN expression ';'")
     def statement(self, p):
@@ -228,7 +226,7 @@ class Parser(SLYParser):
     @_("ID")
     def assignable(self, p):
         return AST.Variable(p.ID, lineno=p.lineno)
-            
+
     @_("ID '[' indexes ']'")
     def assignable(self, p):
         return AST.ArrayAccess(

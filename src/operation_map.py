@@ -29,29 +29,68 @@ class OperationMap:
 
 def matrix_add(matrix1, matrix2):
     n, m = len(matrix1.content), len(matrix1.content[0])
-    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content + matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    result_matrix = [
+        [
+            ScalarType(
+                matrix1.typeOfValue,
+                matrix1.content[i][j].content + matrix2.content[i][j].content,
+            )
+            for j in range(m)
+        ]
+        for i in range(n)
+    ]
     return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_sub(matrix1, matrix2):
     n, m = len(matrix1.content), len(matrix1.content[0])
-    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content - matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    result_matrix = [
+        [
+            ScalarType(
+                matrix1.typeOfValue,
+                matrix1.content[i][j].content - matrix2.content[i][j].content,
+            )
+            for j in range(m)
+        ]
+        for i in range(n)
+    ]
     return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_mul(matrix1, matrix2):
     n, m = len(matrix1.content), len(matrix1.content[0])
-    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content * matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    result_matrix = [
+        [
+            ScalarType(
+                matrix1.typeOfValue,
+                matrix1.content[i][j].content * matrix2.content[i][j].content,
+            )
+            for j in range(m)
+        ]
+        for i in range(n)
+    ]
     return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_div(matrix1, matrix2):
     n, m = len(matrix1.content), len(matrix1.content[0])
-    result_matrix = [[ScalarType(matrix1.typeOfValue, matrix1.content[i][j].content / matrix2.content[i][j].content) for j in range(m)] for i in range(n)]
+    result_matrix = [
+        [
+            ScalarType(
+                matrix1.typeOfValue,
+                matrix1.content[i][j].content / matrix2.content[i][j].content,
+            )
+            for j in range(m)
+        ]
+        for i in range(n)
+    ]
     return MatrixType(matrix1.typeOfValue, n, m, result_matrix)
 
 
 def matrix_transpose(matrix):
     n, m = len(matrix.content), len(matrix.content[0])
-    transposed_matrix = [[ScalarType(matrix.typeOfValue, matrix.content[j][i].content) for j in range(n)] for i in range(m)]
+    transposed_matrix = [
+        [ScalarType(matrix.typeOfValue, matrix.content[j][i].content) for j in range(n)]
+        for i in range(m)
+    ]
     return MatrixType(matrix.typeOfValue, m, n, transposed_matrix)
