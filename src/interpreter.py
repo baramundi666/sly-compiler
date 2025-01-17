@@ -24,15 +24,15 @@ class Interpreter(object):
 
     @when(AST.IntNum)
     def visit(self, node):
-        return ScalarType("intnum", node.value)
+        return ScalarType("intnum", int(node.value))
 
     @when(AST.FloatNum)
     def visit(self, node):
-        return ScalarType("floatnum", node.value)
+        return ScalarType("floatnum", float(node.value))
 
     @when(AST.String)
     def visit(self, node):
-        return ScalarType("string", node.value)
+        return ScalarType("string", str(node.value))
 
     @when(AST.Variable)
     def visit(self, node):
@@ -197,8 +197,8 @@ class Interpreter(object):
         if isinstance(elements.content[0], list):
             return elements
         # HACK! (assuming matrix input is ALWAYS float)
-        val = [ScalarType("floatnum", float(el.content)) for el in elements.content]
-        # val = [el for el in elements.content]
+        # val = [ScalarType("floatnum", float(el.content)) for el in elements.content]
+        val = [el for el in elements.content]
 
         typeOfContent = val[0].typeOfValue
         if node.other is not None:
