@@ -106,12 +106,9 @@ class TypeTable(object):
     def getType(self, leftType, action, rightType):
         action = action.replace("=", "") if action[0] in "+-*/" else action
         if action not in self.typeTable:
-            # print(f"unknown action {action}")
             return None
         if leftType not in self.typeTable[action]:
-            # print(f"illegal left type {leftType} {action}")
             return None
         if rightType not in self.typeTable[action][leftType]:
-            # print(f"illegal right type {leftType} {action} {rightType}")
             return None
         return self.typeTable[action][leftType][rightType]

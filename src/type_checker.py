@@ -42,7 +42,7 @@ class ScalarType(BaseType):
         )
 
     @staticmethod
-    def columns(self):
+    def columns():
         return 1
 
 
@@ -60,27 +60,6 @@ class SuccessType(BaseType):
 class UndefinedType(BaseType):
     def __init__(self):
         super().__init__(entityType="undefined")
-
-
-class VectorType(BaseType):
-    def __init__(self, typeOfValue, length, value):
-        super().__init__(
-            entityType="vector",
-            typeOfValue=typeOfValue,
-            shapeOfValue=(length,),
-            content=value,
-        )
-
-    def rows(self):
-        return 1
-
-    def columns(self):
-        return self.shapeOfValue[0]
-
-    def valueAt(self, index):
-        if self.content is None or index is None:
-            return None
-        return self.content[index]
 
 
 class MatrixType(BaseType):
@@ -122,12 +101,6 @@ class RangeType(BaseType):
 class SpreadType(BaseType):
     def __init__(self, value):
         super().__init__("spread", shapeOfValue=(len(value),), content=value)
-
-
-# class ViewType(BaseType):
-#     def __init__(self, value, full_array):
-#         super().__init__('view', typeOfValue=None, shapeOfValue=None, content=value)
-#         self.full_array = full_array
 
 
 class NodeVisitor(object):
@@ -185,9 +158,6 @@ class TypeChecker(NodeVisitor):
         if isinstance(left, ScalarType):
             return ScalarType(new_type, value=None)
 
-        # if isinstance(left, VectorType):
-        #     return VectorType(new_type, left.columns(), value=None)
-
         if isinstance(left, MatrixType) and isinstance(right, MatrixType):
             if "*" == node.op:
                 if left.shapeOfValue[1] != right.shapeOfValue[0]:
@@ -203,8 +173,6 @@ class TypeChecker(NodeVisitor):
     def visit_Transpose(self, node: Transpose):
         entity = self.visit(node.expression)
         if isinstance(entity, ErrorType) or isinstance(entity, UndefinedType):
-            return entity
-        if isinstance(entity, VectorType):
             return entity
 
         if isinstance(entity, MatrixType):
@@ -312,7 +280,7 @@ class TypeChecker(NodeVisitor):
             if isinstance(newEntity, ErrorType) or isinstance(newEntity, UndefinedType):
                 entity = newEntity
         self.scopes.popScope()
-        return SuccessType()
+        return entity
 
     def visit_Statement(self, node: Statement):
         entity = self.visit(node.statement)
@@ -455,7 +423,7 @@ class TypeChecker(NodeVisitor):
 
     def visit_ArrayAccess(self, node: ArrayAccess):
         array = self.visit(node.array)
-        if array.entityType != "matrix" and array.entityType != "vector":
+        if array.entityType != "matrix":
             return ErrorType(f"Line {node.lineno}: cannot access {array.typeOfValue}")
 
         indexes = [self.visit(index) for index in node.indexes]
@@ -464,9 +432,6 @@ class TypeChecker(NodeVisitor):
             return ErrorType(
                 f"Line {node.lineno}: cannot access {len(indexes)} indices"
             )
-
-        if len(indexes) != 1 and array.entityType == "vector":
-            return ErrorType(f"Line {node.lineno}: cannot access {array.typeOfValue}")
 
         if array.entityType == "matrix":
             if (
@@ -480,14 +445,6 @@ class TypeChecker(NodeVisitor):
             print(array.shapeOfValue, indexes[0].content, indexes[1].content)
             return ErrorType(
                 f"Line {node.lineno}: indexes {indexes[0].content}, {indexes[1].content} out of range"
-            )
-        if array.entityType == "vector":
-            if array.shapeOfValue[0] > indexes[0].content >= 0:
-                return ScalarType(
-                    typeOfValue=array.typeOfValue, value=array.valueAt(indexes[0])
-                )
-            return ErrorType(
-                f"Line {node.lineno}: index {indexes[0].content} out of range"
             )
 
     def visit_Array(self, node: Array):

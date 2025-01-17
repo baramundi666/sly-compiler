@@ -196,8 +196,7 @@ class Interpreter(object):
         elements = self.visit(node.elements)
         if isinstance(elements.content[0], list):
             return elements
-        # HACK! (assuming matrix input is ALWAYS float)
-        # val = [ScalarType("floatnum", float(el.content)) for el in elements.content]
+
         val = [el for el in elements.content]
 
         typeOfContent = val[0].typeOfValue

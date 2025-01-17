@@ -26,10 +26,6 @@ class Parser(SLYParser):
             return AST.Block(p.block, p.start, lineno=p.lineno)
         return AST.Block(p.block, lineno=p.lineno)
 
-    # @_("ID")
-    # def expression(self, p):
-    #     return AST.Variable(p.ID, lineno=p.lineno)
-
     @_("assignable")
     def expression(self, p):
         return p.assignable
@@ -102,11 +98,6 @@ class Parser(SLYParser):
     def expression(self, p):
         return AST.Array(p.list, lineno=p.lineno)
 
-    # @_("ID '[' indexes ']'")
-    # def expression(self, p):
-    #     return AST.ArrayAccess(
-    #         AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
-    #     ) AST.Array(p.list, lineno=p.lineno)
     @_("list_element ',' spread_elements", "list_element")
     def spread_elements(self, p):
         if len(p) == 1:
@@ -210,16 +201,6 @@ class Parser(SLYParser):
 
     @_("expression ':' expression")
     def range(self, p):
-        # tmp1 = (
-        #     AST.IntNum(int(p[0]), lineno=p.lineno)
-        #     if p[0].isnumeric()
-        #     else AST.Variable(p[0], lineno=p.lineno)
-        # )
-        # tmp2 = (
-        #     AST.IntNum(int(p[2]), lineno=p.lineno)
-        #     if p[2].isnumeric()
-        #     else AST.Variable(p[2], lineno=p.lineno)
-        # )
         return AST.ArrayRange(p.expression0, p.expression1, lineno=p.lineno)
 
     @_("ID")

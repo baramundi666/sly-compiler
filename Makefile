@@ -50,22 +50,26 @@ test-tc:
 
 test-interpreter:
 	@echo "Running Interpreter tests"
+	@echo "Running Interpreter test: array.m"
+	@python3 -m src interpreter array.m
 	@echo "Running Interpreter test: basic.m"
 	@python3 -m src interpreter basic.m
 	@echo "Running Interpreter test: fibonacci.m"
 	@python3 -m src interpreter fibonacci.m
+	@echo "Running Interpreter test: ifelse.m"
+	@python3 -m src interpreter ifelse.m
 	@echo "Running Interpreter test: matrix.m"
 	@python3 -m src interpreter matrix.m
-		@echo "Running Interpreter test: pi.m"
+	@echo "Running Interpreter test: pi.m"
 	@python3 -m src interpreter pi.m
-		@echo "Running Interpreter test: primes.m"
+	@echo "Running Interpreter test: primes.m"
 	@python3 -m src interpreter primes.m
-		@echo "Running Interpreter test: sqrt.m"
+	@echo "Running Interpreter test: sqrt.m"
 	@python3 -m src interpreter sqrt.m
-		@echo "Running Interpreter test: triangle.m"
+	@echo "Running Interpreter test: triangle.m"
 	@python3 -m src interpreter triangle.m
 	@echo "Interpreter tests completed"
 
 run-main: 
 	@echo "Running __main__.py file"
-	@python3 -m src __main__.py
+	@python3 -m src

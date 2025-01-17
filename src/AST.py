@@ -3,7 +3,6 @@ class Node(object):
         self.lineno = lineno
 
     def visit(self, visitor):
-        # TODO
         try:
             func = getattr(visitor, f"visit_{self.__class__.__name__}")
             return func(self)
