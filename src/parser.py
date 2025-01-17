@@ -107,7 +107,6 @@ class Parser(SLYParser):
     #     return AST.ArrayAccess(
     #         AST.Variable(p.ID, lineno=p.lineno), p.indexes, lineno=p.lineno
     #     ) AST.Array(p.list, lineno=p.lineno)
-
     @_("list_element ',' spread_elements", "list_element")
     def spread_elements(self, p):
         if len(p) == 1:

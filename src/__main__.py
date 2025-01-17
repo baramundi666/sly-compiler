@@ -9,7 +9,7 @@ from src.tree_printer import TreePrinter
 
 
 def main():
-    default = ("interpreter", "array.m")
+    default = ("interpreter", "triangle.m")
     lab = sys.argv[1] if len(sys.argv) == 3 else default[0]
     file_name = sys.argv[2] if len(sys.argv) == 3 else default[1]
     path = get_absolute_path(f"data/{lab}/{file_name}")
@@ -51,7 +51,8 @@ def test_type_checker(text):
     parser = Parser()
     ast = parser.parse(lexer.tokenize(text))
     tc = TypeChecker()
-    tc.visit(ast)
+    tc_result = tc.visit(ast)
+    print(tc_result)
 
 
 def test_ast(text):

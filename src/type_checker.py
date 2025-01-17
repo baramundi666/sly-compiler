@@ -185,8 +185,8 @@ class TypeChecker(NodeVisitor):
         if isinstance(left, ScalarType):
             return ScalarType(new_type, value=None)
 
-        if isinstance(left, VectorType):
-            return VectorType(new_type, left.columns(), value=None)
+        # if isinstance(left, VectorType):
+        #     return VectorType(new_type, left.columns(), value=None)
 
         if isinstance(left, MatrixType) and isinstance(right, MatrixType):
             if "*" == node.op:
@@ -287,6 +287,9 @@ class TypeChecker(NodeVisitor):
                 return ErrorType(
                     f"Line {node.lineno}: size has to be an intnum but is {size.typeOfValue}"
                 )
+        if len(sizes) > 2:
+            return ErrorType(f"Line {node.lineno}: too many sizes")
+
         if len(sizes) > 1:
             return MatrixType(
                 typeOfValue="intnum",
@@ -309,7 +312,7 @@ class TypeChecker(NodeVisitor):
             if isinstance(newEntity, ErrorType) or isinstance(newEntity, UndefinedType):
                 entity = newEntity
         self.scopes.popScope()
-        return entity
+        return SuccessType()
 
     def visit_Statement(self, node: Statement):
         entity = self.visit(node.statement)
